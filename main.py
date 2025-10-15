@@ -15,7 +15,7 @@ from pydantic import EmailStr
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig
 
-# Load .env file for local development
+# Load .env file for local developmentt
 load_dotenv()
 
 # --- FastAPI App Initialization ---
