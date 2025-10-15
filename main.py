@@ -14,8 +14,12 @@ from slowapi.errors import RateLimitExceeded
 from pydantic import EmailStr
 from dotenv import load_dotenv
 
-# .env 파일은 로컬 개발 시에만 사용됩니다.
-load_dotenv()
+# Railway와 같은 클라우드 환경에서는 .env 파일을 사용하지 않으므로,
+# 'RAILWAY_STATIC_URL' 같은 Railway 전용 변수가 있는지 확인하여
+# 로컬 환경일 때만 load_dotenv()를 실행합니다.
+if "RAILWAY_STATIC_URL" not in os.environ:
+    print("Running in local environment, loading .env file.")
+    load_dotenv()
 
 # --- FastAPI 앱 초기화 ---
 app = FastAPI()
@@ -38,11 +42,9 @@ async def startup():
         "MAIL_PASSWORD": os.getenv("MAIL_PASSWORD"),
     }
     
-    # --- !!!!! 결정적인 디버깅 코드 !!!!! ---
-    # 앱 시작 시점에 읽어들인 환경 변수 값을 로그에 직접 출력합니다.
+    # --- 디버깅 코드 ---
     print(f"DEBUG: Variables loaded at startup: {app.state.email_config}")
-    # ------------------------------------
-
+    
     # --- 데이터베이스 설정 ---
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./gureum.db")
     if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
@@ -69,7 +71,6 @@ async def startup():
     engine = sqlalchemy.create_engine(DATABASE_URL, **engine_args)
     metadata.create_all(engine)
     
-    # 다른 곳에서 재사용할 수 있도록 app.state에 저장
     app.state.database = database
     app.state.subscribers_table = subscribers
     
@@ -82,7 +83,6 @@ async def shutdown():
 
 
 # --- 이메일 전송 함수 (smtplib 사용) ---
-# 이제 app.state에 저장된 설정값을 인자로 받습니다.
 def send_email_background(recipient_email: str, subject: str, email_config: dict):
     if not all(email_config.values()):
         print("Email configuration is missing from app state. Skipping email.")
@@ -135,12 +135,10 @@ async def subscribe_form(
         await db.execute(query)
         
         subject = "Cloud No.7 구독해주셔서 감사합니다."
-        # app.state에서 이메일 설정을 가져와 백그라운드 작업에 전달합니다.
         background_tasks.add_task(send_email_background, email, subject, request.app.state.email_config)
 
     except Exception as e:
         print(f"Error inserting data: {e}")
-        # 실제 운영 시에는 여기서 에러 처리를 하는 것이 좋습니다.
         pass
             
     return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
