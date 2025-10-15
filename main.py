@@ -141,7 +141,7 @@ async def subscribe_form(
         print(f"Error inserting data: {e}")
         pass
             
-    return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
+    return RedirectResponse(url="/cloud_o7_success.html", status_code=303)
 
 @app.get("/")
 async def root():
@@ -152,4 +152,3 @@ app.mount("/", StaticFiles(directory="."), name="static")
 
 if __name__ == "__main__":
     uvicorn.run("main.app", host="0.0.0.0", port=8000, reload=True)
-
