@@ -76,6 +76,8 @@ def send_email_background(recipient_email: str, subject: str):
     mail_username = os.getenv("MAIL_USERNAME")
     mail_password = os.getenv("MAIL_PASSWORD")
 
+    print(f"DEBUG Email Config: Server={mail_server}, Port={mail_port}, User={mail_username}, From={mail_from}, Password_Set={bool(mail_password)}") # NEW DEBUG LINE
+
     if not all([mail_server, mail_username, mail_password, mail_from]):
         print("Email configuration is missing from environment variables. Skipping email.")
         return
