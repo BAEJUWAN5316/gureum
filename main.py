@@ -84,6 +84,8 @@ async def shutdown():
 
 # --- 이메일 전송 함수 (smtplib 사용) ---
 def send_email_background(recipient_email: str, subject: str, email_config: dict):
+    # email_config 딕셔너리의 모든 값이 채워져 있는지 확인합니다.
+    # .values()는 딕셔너리의 값들만 가져옵니다. None이 하나라도 있으면 all()은 False가 됩니다.
     if not all(email_config.values()):
         print("Email configuration is missing from app state. Skipping email.")
         return
@@ -141,7 +143,7 @@ async def subscribe_form(
         print(f"Error inserting data: {e}")
         pass
             
-    return RedirectResponse(url="/cloud_o7_success.html", status_code=303)
+    return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
 
 @app.get("/")
 async def root():
@@ -151,4 +153,5 @@ async def root():
 app.mount("/", StaticFiles(directory="."), name="static")
 
 if __name__ == "__main__":
-    uvicorn.run("main.app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
