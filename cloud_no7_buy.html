@@ -90,6 +90,7 @@
 
       <div id="msg-success" class="success" role="status">등록되었습니다. 곧 하늘에서 소식을 전할게요 ☁︎</div>
       <div id="msg-error" class="error" role="alert">전송에 실패했습니다. 이메일 형식과 동의 항목을 확인해주세요.</div>
+      <div id="msg-limit-error" class="error" role="alert">3회까지만 구매 가능합니다.</div>
 
       <form id="subscribe-form" method="POST" action="/subscribe" novalidate>
         <div class="field">
@@ -141,6 +142,12 @@
     const el = document.getElementById(k);
     if(el) el.value = params.get(k) || '';
   });
+
+  // Show server-side errors if redirected
+  if (params.get('error') === 'limit_reached') {
+    const limitErr = document.getElementById('msg-limit-error');
+    if(limitErr) limitErr.style.display = 'block';
+  }
 
   // Front-end validation + graceful fallback
   const form = document.getElementById('subscribe-form');
