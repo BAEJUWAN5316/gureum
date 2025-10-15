@@ -13,45 +13,31 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from pydantic import EmailStr
 from dotenv import load_dotenv
-from fastapi_mail import ConnectionConfig
 
-# Load .env file for local developmentt
+# .env 파일은 로컬 개발 시에만 사용됩니다.
 load_dotenv()
 
-# --- FastAPI App Initialization ---
+# --- FastAPI 앱 초기화 ---
 app = FastAPI()
 
-# --- Rate Limiter Configuration ---
+# --- Rate Limiter 설정 ---
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
-# --- Lifespan Events (Startup/Shutdown) ---
+# --- 앱 수명 주기 이벤트 (Startup/Shutdown) ---
 @app.on_event("startup")
 async def startup():
-    # --- Email Configuration (now inside startup) ---
-    app.state.email_conf = ConnectionConfig(
-        MAIL_USERNAME = os.getenv("MAIL_USERNAME"),
-        MAIL_PASSWORD = os.getenv("MAIL_PASSWORD"),
-        MAIL_FROM = os.getenv("MAIL_FROM"),
-        MAIL_PORT = int(os.getenv("MAIL_PORT", 587)),
-        MAIL_SERVER = os.getenv("MAIL_SERVER"),
-        MAIL_STARTTLS = True,
-        MAIL_SSL_TLS = False,
-        USE_CREDENTIALS = True,
-        VALIDATE_CERTS = True
-    )
-
-    # --- Database Configuration (now inside startup) ---
+    # --- 데이터베이스 설정 ---
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./gureum.db")
-    if DATABASE_URL.startswith("postgres://"):
+    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
     
     database = databases.Database(DATABASE_URL)
     metadata = sqlalchemy.MetaData()
 
-    # Define the subscribers tablee
+    # 구독자 테이블 정의
     subscribers = sqlalchemy.Table(
         "subscribers",
         metadata,
@@ -69,6 +55,7 @@ async def startup():
     engine = sqlalchemy.create_engine(DATABASE_URL, **engine_args)
     metadata.create_all(engine)
     
+    # 다른 곳에서 재사용할 수 있도록 app.state에 저장
     app.state.database = database
     app.state.subscribers_table = subscribers
     
@@ -80,8 +67,19 @@ async def shutdown():
     await app.state.database.disconnect()
 
 
-# --- Email Sending Function ---
-async def send_email_background(recipient_email: str, subject: str, conf: ConnectionConfig):
+# --- 이메일 전송 함수 (smtplib 사용) ---
+def send_email_background(recipient_email: str, subject: str):
+    # 환경 변수에서 직접 이메일 설정을 읽어옵니다.
+    mail_from = os.getenv("MAIL_FROM")
+    mail_server = os.getenv("MAIL_SERVER")
+    mail_port = int(os.getenv("MAIL_PORT", 587))
+    mail_username = os.getenv("MAIL_USERNAME")
+    mail_password = os.getenv("MAIL_PASSWORD")
+
+    if not all([mail_server, mail_username, mail_password, mail_from]):
+        print("Email configuration is missing from environment variables. Skipping email.")
+        return
+
     try:
         with open("email_template.html", "r", encoding="utf-8") as f:
             body_html = f.read()
@@ -91,21 +89,22 @@ async def send_email_background(recipient_email: str, subject: str, conf: Connec
     msg = EmailMessage()
     msg.set_content("Cloud No.7 구독이 완료되었습니다.")
     msg.add_alternative(body_html, subtype='html')
+    
     msg["Subject"] = subject
-    msg["From"] = conf.MAIL_FROM
+    msg["From"] = mail_from
     msg["To"] = recipient_email
 
     try:
-        with smtplib.SMTP(conf.MAIL_SERVER, conf.MAIL_PORT) as server:
+        with smtplib.SMTP(mail_server, mail_port) as server:
             server.starttls()
-            server.login(conf.MAIL_USERNAME, conf.MAIL_PASSWORD)
+            server.login(mail_username, mail_password)
             server.send_message(msg)
             print(f"Email successfully sent to {recipient_email}")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
 
-# --- API Endpoints ---
+# --- API 엔드포인트 ---
 @app.post("/subscribe")
 @limiter.limit("5/minute")
 async def subscribe_form(
@@ -128,10 +127,11 @@ async def subscribe_form(
         await db.execute(query)
         
         subject = "Cloud No.7 구독해주셔서 감사합니다."
-        background_tasks.add_task(send_email_background, email, subject, request.app.state.email_conf)
+        background_tasks.add_task(send_email_background, email, subject)
 
     except Exception as e:
         print(f"Error inserting data: {e}")
+        # 실제 운영 시에는 여기서 에러 처리를 하는 것이 좋습니다.
         pass
             
     return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
@@ -139,14 +139,6 @@ async def subscribe_form(
 @app.get("/")
 async def root():
     return FileResponse('cloud_no7_index.html')
-
-@app.get("/debug-env")
-async def debug_env():
-    return {
-        "mail_username": os.getenv("MAIL_USERNAME"),
-        "mail_server": os.getenv("MAIL_SERVER"),
-        "database_url_set": "Yes" if os.getenv("DATABASE_URL") else "No"
-    }
 
 # Mount static files
 app.mount("/", StaticFiles(directory="."), name="static")
