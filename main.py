@@ -135,6 +135,15 @@ async def subscribe_form(
 async def root():
     return FileResponse('cloud_no7_index.html')
 
+@app.get("/debug-env")
+async def debug_env():
+    return {
+        "mail_username": os.getenv("MAIL_USERNAME"),
+        "mail_server": os.getenv("MAIL_SERVER"),
+        "database_url_set": "Yes" if os.getenv("DATABASE_URL") else "No"
+    }
+
+# Mount static files
 app.mount("/", StaticFiles(directory="."), name="static")
 
 if __name__ == "__main__":
