@@ -51,7 +51,7 @@ async def startup():
     database = databases.Database(DATABASE_URL)
     metadata = sqlalchemy.MetaData()
 
-    # Define the subscribers table
+    # Define the subscribers tablee
     subscribers = sqlalchemy.Table(
         "subscribers",
         metadata,
