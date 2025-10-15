@@ -30,7 +30,6 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 @app.on_event("startup")
 async def startup():
     # --- 이메일 설정을 startup 안으로 이동 ---
-    # 앱이 시작될 때 환경 변수를 안전하게 읽어와 app.state에 저장합니다.
     app.state.email_config = {
         "MAIL_FROM": os.getenv("MAIL_FROM"),
         "MAIL_SERVER": os.getenv("MAIL_SERVER"),
@@ -39,6 +38,11 @@ async def startup():
         "MAIL_PASSWORD": os.getenv("MAIL_PASSWORD"),
     }
     
+    # --- !!!!! 결정적인 디버깅 코드 !!!!! ---
+    # 앱 시작 시점에 읽어들인 환경 변수 값을 로그에 직접 출력합니다.
+    print(f"DEBUG: Variables loaded at startup: {app.state.email_config}")
+    # ------------------------------------
+
     # --- 데이터베이스 설정 ---
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./gureum.db")
     if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
