@@ -29,6 +29,16 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # --- 앱 수명 주기 이벤트 (Startup/Shutdown) ---
 @app.on_event("startup")
 async def startup():
+    # --- 이메일 설정을 startup 안으로 이동 ---
+    # 앱이 시작될 때 환경 변수를 안전하게 읽어와 app.state에 저장합니다.
+    app.state.email_config = {
+        "MAIL_FROM": os.getenv("MAIL_FROM"),
+        "MAIL_SERVER": os.getenv("MAIL_SERVER"),
+        "MAIL_PORT": int(os.getenv("MAIL_PORT", 587)),
+        "MAIL_USERNAME": os.getenv("MAIL_USERNAME"),
+        "MAIL_PASSWORD": os.getenv("MAIL_PASSWORD"),
+    }
+    
     # --- 데이터베이스 설정 ---
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./gureum.db")
     if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
@@ -68,18 +78,10 @@ async def shutdown():
 
 
 # --- 이메일 전송 함수 (smtplib 사용) ---
-def send_email_background(recipient_email: str, subject: str):
-    # 환경 변수에서 직접 이메일 설정을 읽어옵니다.
-    mail_from = os.getenv("MAIL_FROM")
-    mail_server = os.getenv("MAIL_SERVER")
-    mail_port = int(os.getenv("MAIL_PORT", 587))
-    mail_username = os.getenv("MAIL_USERNAME")
-    mail_password = os.getenv("MAIL_PASSWORD")
-
-    print(f"DEBUG Email Config: Server={mail_server}, Port={mail_port}, User={mail_username}, From={mail_from}, Password_Set={bool(mail_password)}") # NEW DEBUG LINE
-
-    if not all([mail_server, mail_username, mail_password, mail_from]):
-        print("Email configuration is missing from environment variables. Skipping email.")
+# 이제 app.state에 저장된 설정값을 인자로 받습니다.
+def send_email_background(recipient_email: str, subject: str, email_config: dict):
+    if not all(email_config.values()):
+        print("Email configuration is missing from app state. Skipping email.")
         return
 
     try:
@@ -93,13 +95,13 @@ def send_email_background(recipient_email: str, subject: str):
     msg.add_alternative(body_html, subtype='html')
     
     msg["Subject"] = subject
-    msg["From"] = mail_from
+    msg["From"] = email_config["MAIL_FROM"]
     msg["To"] = recipient_email
 
     try:
-        with smtplib.SMTP(mail_server, mail_port) as server:
+        with smtplib.SMTP(email_config["MAIL_SERVER"], email_config["MAIL_PORT"]) as server:
             server.starttls()
-            server.login(mail_username, mail_password)
+            server.login(email_config["MAIL_USERNAME"], email_config["MAIL_PASSWORD"])
             server.send_message(msg)
             print(f"Email successfully sent to {recipient_email}")
     except Exception as e:
@@ -129,7 +131,8 @@ async def subscribe_form(
         await db.execute(query)
         
         subject = "Cloud No.7 구독해주셔서 감사합니다."
-        background_tasks.add_task(send_email_background, email, subject)
+        # app.state에서 이메일 설정을 가져와 백그라운드 작업에 전달합니다.
+        background_tasks.add_task(send_email_background, email, subject, request.app.state.email_config)
 
     except Exception as e:
         print(f"Error inserting data: {e}")
@@ -146,4 +149,5 @@ async def root():
 app.mount("/", StaticFiles(directory="."), name="static")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main.app", host="0.0.0.0", port=8000, reload=True)
+
