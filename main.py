@@ -1,3 +1,6 @@
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import HTMLResponse
+
 import os
 import smtplib
 from email.message import EmailMessage
@@ -186,6 +189,15 @@ async def success_page():
 
 # Mount static files (excluding the ones handled by specific routes)
 # app.mount("/", StaticFiles(directory="."), name="static") # Removed this line
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    if exc.status_code == 404:
+        with open("404.html", "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content, status_code=404)
+    return await request.app.default_exception_handlers[StarletteHTTPException](request, exc)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
