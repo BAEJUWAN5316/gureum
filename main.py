@@ -59,10 +59,11 @@ async def startup():
         "subscribers",
         metadata,
         sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column("email", sqlalchemy.String, unique=True, index=True),
+        sqlalchemy.Column("email", sqlalchemy.String, index=True), # Removed unique=True
         sqlalchemy.Column("name", sqlalchemy.String, nullable=True),
         sqlalchemy.Column("ref", sqlalchemy.String, nullable=True),
         sqlalchemy.Column("timestamp", sqlalchemy.DateTime, default=datetime.utcnow),
+        sqlalchemy.Column("email_sent", sqlalchemy.Boolean, default=False), # New column
     )
     
     engine_args = {}
@@ -84,8 +85,10 @@ async def shutdown():
 
 
 # --- 이메일 전송 함수 (SendGrid 사용으로 변경) ---
-def send_email_background(recipient_email: str, subject: str):
-    # 환경 변수에서 SendGrid API 키와 보내는 사람 이메일을 읽어옵니다.
+async def send_email_background_with_update(recipient_email: str, subject: str, record_id: int):
+    db = app.state.database # Access the database from app.state
+    sub_table = app.state.subscribers_table
+
     sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
     mail_from = os.getenv("MAIL_FROM")
 
@@ -93,6 +96,7 @@ def send_email_background(recipient_email: str, subject: str):
         print("SendGrid API Key or MAIL_FROM is missing. Skipping email.")
         return
 
+    email_sent_successfully = False
     try:
         with open("email_template.html", "r", encoding="utf-8") as f:
             body_html = f.read()
@@ -109,8 +113,18 @@ def send_email_background(recipient_email: str, subject: str):
         sendgrid_client = SendGridAPIClient(sendgrid_api_key)
         response = sendgrid_client.send(message)
         print(f"Email sent via SendGrid to {recipient_email}, Status Code: {response.status_code}")
+        if response.status_code >= 200 and response.status_code < 300: # Check for successful status codes
+            email_sent_successfully = True
     except Exception as e:
         print(f"Failed to send email via SendGrid: {e}")
+
+    # Update email_sent status in the database
+    if email_sent_successfully:
+        update_query = sub_table.update().where(sub_table.c.id == record_id).values(email_sent=True)
+        await db.execute(update_query)
+        print(f"Updated email_sent status for record ID {record_id} to True.")
+    else:
+        print(f"Email sending failed for record ID {record_id}. email_sent status remains False.")
 
 
 # --- API 엔드포인트 ---
@@ -125,22 +139,36 @@ async def subscribe_form(
 ):
     db = request.app.state.database
     sub_table = request.app.state.subscribers_table
-    
+
+    # Check existing subscriptions for the email
+    count_query = sqlalchemy.select(sqlalchemy.func.count()).select_from(sub_table).where(sub_table.c.email == email)
+    existing_count = await db.fetch_val(count_query)
+
+    if existing_count >= 3:
+        # Redirect to a page indicating the limit has been reached
+        # Or return a JSON response with an error message
+        # For now, let's redirect to the buy page with an error parameter
+        return RedirectResponse(url="/cloud_no7_buy.html?error=limit_reached", status_code=303)
+
     try:
-        query = sub_table.insert().values(
+        # Insert the new subscription
+        insert_query = sub_table.insert().values(
             email=email, 
             name=name, 
             ref=ref, 
-            timestamp=datetime.utcnow()
+            timestamp=datetime.utcnow(),
+            email_sent=False # Initialize email_sent to False
         )
-        await db.execute(query)
-        
+        last_record_id = await db.execute(insert_query)
+
         subject = "Cloud No.7 구독해주셔서 감사합니다."
-        background_tasks.add_task(send_email_background, email, subject)
+        # Pass the record ID to the background task to update email_sent status
+        background_tasks.add_task(send_email_background_with_update, email, subject, last_record_id)
 
     except Exception as e:
-        print(f"Error inserting data: {e}")
-        pass
+        print(f"Error inserting data or sending email: {e}")
+        # Handle specific database errors if needed
+        return RedirectResponse(url="/cloud_no7_buy.html?error=db_error", status_code=303)
             
     return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
 
