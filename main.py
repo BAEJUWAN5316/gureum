@@ -14,6 +14,9 @@ from slowapi.errors import RateLimitExceeded
 from pydantic import EmailStr
 from dotenv import load_dotenv
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
 # Railway와 같은 클라우드 환경에서는 .env 파일을 사용하지 않으므로,
 # 'RAILWAY_STATIC_URL' 같은 Railway 전용 변수가 있는지 확인하여
 # 로컬 환경일 때만 load_dotenv()를 실행합니다.
@@ -34,12 +37,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 @app.on_event("startup")
 async def startup():
     # --- 이메일 설정을 startup 안으로 이동 ---
+    # SendGrid를 사용하므로 smtplib 관련 설정은 필요 없습니다.
+    # 하지만 MAIL_FROM은 SendGrid에서도 사용될 수 있으므로 유지합니다.
     app.state.email_config = {
         "MAIL_FROM": os.getenv("MAIL_FROM"),
-        "MAIL_SERVER": os.getenv("MAIL_SERVER"),
-        "MAIL_PORT": int(os.getenv("MAIL_PORT", 587)),
-        "MAIL_USERNAME": os.getenv("MAIL_USERNAME"),
-        "MAIL_PASSWORD": os.getenv("MAIL_PASSWORD"),
     }
     
     # --- 디버깅 코드 ---
@@ -82,12 +83,14 @@ async def shutdown():
     await app.state.database.disconnect()
 
 
-# --- 이메일 전송 함수 (smtplib 사용) ---
-def send_email_background(recipient_email: str, subject: str, email_config: dict):
-    # email_config 딕셔너리의 모든 값이 채워져 있는지 확인합니다.
-    # .values()는 딕셔너리의 값들만 가져옵니다. None이 하나라도 있으면 all()은 False가 됩니다.
-    if not all(email_config.values()):
-        print("Email configuration is missing from app state. Skipping email.")
+# --- 이메일 전송 함수 (SendGrid 사용으로 변경) ---
+def send_email_background(recipient_email: str, subject: str):
+    # 환경 변수에서 SendGrid API 키와 보내는 사람 이메일을 읽어옵니다.
+    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+    mail_from = os.getenv("MAIL_FROM")
+
+    if not sendgrid_api_key or not mail_from:
+        print("SendGrid API Key or MAIL_FROM is missing. Skipping email.")
         return
 
     try:
@@ -96,22 +99,18 @@ def send_email_background(recipient_email: str, subject: str, email_config: dict
     except FileNotFoundError:
         body_html = "<p>구독해주셔서 감사합니다.</p>"
 
-    msg = EmailMessage()
-    msg.set_content("Cloud No.7 구독이 완료되었습니다.")
-    msg.add_alternative(body_html, subtype='html')
-    
-    msg["Subject"] = subject
-    msg["From"] = email_config["MAIL_FROM"]
-    msg["To"] = recipient_email
-
+    message = Mail(
+        from_email=mail_from,
+        to_emails=recipient_email,
+        subject=subject,
+        html_content=body_html
+    )
     try:
-        with smtplib.SMTP(email_config["MAIL_SERVER"], email_config["MAIL_PORT"]) as server:
-            server.starttls()
-            server.login(email_config["MAIL_USERNAME"], email_config["MAIL_PASSWORD"])
-            server.send_message(msg)
-            print(f"Email successfully sent to {recipient_email}")
+        sendgrid_client = SendGridAPIClient(sendgrid_api_key)
+        response = sendgrid_client.send(message)
+        print(f"Email sent via SendGrid to {recipient_email}, Status Code: {response.status_code}")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Failed to send email via SendGrid: {e}")
 
 
 # --- API 엔드포인트 ---
@@ -137,7 +136,7 @@ async def subscribe_form(
         await db.execute(query)
         
         subject = "Cloud No.7 구독해주셔서 감사합니다."
-        background_tasks.add_task(send_email_background, email, subject, request.app.state.email_config)
+        background_tasks.add_task(send_email_background, email, subject)
 
     except Exception as e:
         print(f"Error inserting data: {e}")
