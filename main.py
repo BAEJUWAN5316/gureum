@@ -19,7 +19,7 @@ from sendgrid.helpers.mail import Mail
 
 # Railway와 같은 클라우드 환경에서는 .env 파일을 사용하지 않으므로,
 # 'RAILWAY_STATIC_URL' 같은 Railway 전용 변수가 있는지 확인하여
-# 로컬 환경일 때만 load_dotenv()를 실행합니다.
+# 로컬 환경일 때만 load_dotenv()를 실행합니다。
 if "RAILWAY_STATIC_URL" not in os.environ:
     print("Running in local environment, loading .env file.")
     load_dotenv()
@@ -148,7 +148,7 @@ async def subscribe_form(
         # Redirect to a page indicating the limit has been reached
         # Or return a JSON response with an error message
         # For now, let's redirect to the buy page with an error parameter
-        return RedirectResponse(url="/cloud_no7_buy.html?error=limit_reached", status_code=303)
+        return RedirectResponse(url="/buy?error=limit_reached", status_code=303)
 
     try:
         # Insert the new subscription
@@ -168,17 +168,27 @@ async def subscribe_form(
     except Exception as e:
         print(f"Error inserting data or sending email: {e}")
         # Handle specific database errors if needed
-        return RedirectResponse(url="/cloud_no7_buy.html?error=db_error", status_code=303)
+        return RedirectResponse(url="/buy?error=db_error", status_code=303)
             
-    return RedirectResponse(url="/cloud_no7_success.html", status_code=303)
+    return RedirectResponse(url="/success", status_code=303)
 
 @app.get("/")
 async def root():
     return FileResponse('cloud_no7_index.html')
 
-# Mount static files
-app.mount("/", StaticFiles(directory="."), name="static")
+@app.get("/buy")
+async def buy_page():
+    return FileResponse('cloud_no7_buy.html')
+
+@app.get("/success")
+async def success_page():
+    return FileResponse('cloud_no7_success.html')
+
+# Mount static files (excluding the ones handled by specific routes)
+# app.mount("/", StaticFiles(directory="."), name="static") # Removed this line
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+app.mount("/", StaticFiles(directory="."), name="static") # Re-added static files mount
 
