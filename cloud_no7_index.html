@@ -8,6 +8,7 @@
   <meta property="og:title" content="Cloud No.7 — 일곱 번째 구름을 수집하다" />
   <meta property="og:description" content="하늘에서 일곱 번째로 태어난 구름을 병에 담아 전하는 감성 디지털 굿즈 브랜드" />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="kakao.png" />
   <meta name="theme-color" content="#e8ecef" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -145,6 +146,9 @@
       .strip{ grid-template-columns: 1fr; }
       .tile{ grid-column: span 4;}
       .tile:nth-child(1){ grid-column: span 4;}
+    }
+    @media (max-width: 600px){
+      .tile{ grid-column: span 6;} /* 2 tiles per row (12 / 6 = 2) */
     }
     @media (prefers-reduced-motion: reduce){
       .parallax{ transform:none !important}
