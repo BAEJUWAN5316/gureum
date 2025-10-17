@@ -199,8 +199,11 @@ async def http_exception_handler(request, exc):
     return await request.app.default_exception_handlers[StarletteHTTPException](request, exc)
 
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/game1", StaticFiles(directory="game_gawibawibo", html=True), name="game1")
+app.mount("/game2", StaticFiles(directory="game_dinosaur", html=True), name="game2")
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
-app.mount("/", StaticFiles(directory="."), name="static") # Re-added static files mount
 

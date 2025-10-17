@@ -1,0 +1,1108 @@
+favicon.ico:1  GET http://localhost:8000/favicon.ico 404 (File not found)Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)
+updatePlayer @ player.js:110
+animateGame @ game.js:71
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+requestAnimationFrame
+animateGame @ game.js:32
+(anonymous) @ main.js:4Understand this error
+80player.js:110 Uncaught ReferenceError: THREE is not defined
+    at updatePlayer (player.js:110:23)
+    at animateGame (game.js:71:15)

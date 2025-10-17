@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>3D Game</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+	<body>
+
+		<div id="blocker">
+
+			<div id="instructions">
+				<img src="logo.png" alt="Game Logo" id="logo">
+				<p id="instructions-title" style="font-size:36px">Click to play</p>
+				<p id="instructions-body">
+					Move: WASD<br/>
+					Jump: SPACE<br/>
+					Look: MOUSE
+				</p>
+			</div>
+
+		</div>
+
+        <div id="health" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 24px; font-family: monospace;">HP: 100</div>
+        <div id="bullets" style="position: absolute; top: 40px; left: 10px; color: white; font-size: 24px; font-family: monospace;">Bullets: 30/30</div>
+        <div id="bombs" style="position: absolute; top: 70px; left: 10px; color: white; font-size: 24px; font-family: monospace;">Bombs: 3</div>
+
+        <div id="crosshair" style="position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background-color: white; transform: translate(-50%, -50%);"></div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+				}
+			}
+		</script>
+
+		        <script type="module" src="./main.js"></script>
+			</body>
+</html>
