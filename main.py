@@ -164,7 +164,7 @@ async def subscribe_form(
         )
         last_record_id = await db.execute(insert_query)
 
-        subject = "Cloud No.7 구독해주셔서 감사합니다."
+        subject = "[Cloud No.7] 저희의 구름을 구매해주셔서 감사합니다."
         # Pass the record ID to the background task to update email_sent status
         background_tasks.add_task(send_email_background_with_update, email, subject, last_record_id)
 
