@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>설득의 신</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 업적 UI -->
+        <div id="achievement-container">
+            <button id="achievement-toggle-btn">업적</button>
+            <ul id="achievement-list" class="hidden"></ul>
+        </div>
+
+        <!-- 업적 달성 알림 -->
+        <div id="achievement-toast" class="hidden"></div>
+        
+        <!-- 인게임 UI -->
+        <div id="hud">
+            <div id="day-counter">Day: <span id="day">1</span></div>
+            <div id="stats">
+                <span>재력: <span id="wealth">100</span></span>
+                <span>토지: <span id="land">100</span></span>
+                <span>무력: <span id="force">10</span></span>
+                <span>인구: <span id="population">0</span></span>
+                <span>행복도: <span id="happiness">50</span></span>
+            </div>
+            <div id="timer">
+                남은 시간: <span id="time">10</span>
+            </div>
+        </div>
+        <div id="game-screen">
+            <div id="player"></div>
+        </div>
+        <div id="controls-container">
+            <div id="joystick-zone"></div>
+            <div id="action-button" class="action-btn">
+                설득
+            </div>
+        </div>
+
+        <!-- 왕의 방 화면 -->
+        <div id="throne-room-container" class="hidden"></div>
+
+        <!-- 각종 모달 (팝업창) -->
+        <div id="dialogue-modal" class="modal hidden">
+            <div id="dialogue-box">
+                <p id="dialogue-text"></p>
+                <button id="dialogue-next-btn">다음</button>
+            </div>
+        </div>
+        <div id="minigame-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>설득 미니게임!</h3>
+                <p>타이밍에 맞춰 버튼을 누르세요!</p>
+                <div id="minigame-bar">
+                    <div id="minigame-target"></div>
+                    <div id="minigame-indicator"></div>
+                </div>
+                <button id="minigame-stop-btn">STOP</button>
+            </div>
+        </div>
+        <div id="day-end-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="summary-title">하루 결산</h2>
+                <div id="summary-stats"></div>
+                <button id="next-day-btn">다음 날로</button>
+            </div>
+        </div>
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="gameOverTitle">마을 붕괴</h2>
+                <p id="gameOverText">마을이 붕괴되었습니다...</p>
+                <button id="restart-btn">다시 시작</button>
+            </div>
+        </div>
+        <div id="king-event-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>왕의 등장</h2>
+                <p>15일이 지나, 왕이 당신의 마을을 방문했습니다.</p>
+                <button id="peace-btn">A. 평화로운 마을로 남겠다</button>
+                <button id="war-btn">B. 왕에게 대항한다</button>
+                <button id="iamking-btn">C. 내가 곧 왕이다</button>
+            </div>
+        </div>
+        <div id="ending-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="ending-title"></h2>
+                <p id="ending-text"></p>
+                <button id="restart-btn-end">다시 시작</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

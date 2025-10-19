@@ -1,0 +1,2 @@
+GET http://127.0.0.1:5500/favicon.ico 404 (Not Found)Understand this error
+main.js:133 Uncaught ReferenceError: dialogueText is n
