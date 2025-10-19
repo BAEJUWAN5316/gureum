@@ -202,7 +202,7 @@ async def http_exception_handler(request, exc):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/game1", StaticFiles(directory="game_gawibawibo", html=True), name="game1")
 app.mount("/game2", StaticFiles(directory="game_dinosaur", html=True), name="game2")
-app.mount("/game3", StaticFiles(directory="2d_game_sul", html=True), name="game3")
+app.mount("/game3", StaticFiles(directory="game_sul", html=True), name="game3")
 
 
 if __name__ == "__main__":
