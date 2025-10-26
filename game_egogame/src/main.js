@@ -81,27 +81,27 @@ const gameLoop = (timestamp) => {
 
 async function initGameAssets() {
     // Load NPC data
-    const response = await fetch('../data/npcs.json');
+    const response = await fetch('/game_egogame/data/npcs.json');
     const npcData = await response.json();
 
     // Load PRODUCT_URL from url.txt
-    const urlResponse = await fetch('../url.txt');
+    const urlResponse = await fetch('/game_egogame/url.txt');
     PRODUCT_URL = await urlResponse.text();
     
 
     // Load images
     await assetLoader.loadImages({
-        player: '../assets/player.png',
-        tiles: '../assets/tiles.png',
-        npc_luna: '../assets/npc_luna.png',
-        npc_khan: '../assets/npc_khan.png',
-        npc_mio: '../assets/npc_mio.png',
-        ui: '../assets/ui.png',
-        background: '../assets/background.png',
-        sound_on: '../assets/sound_on.png',
-        sound_off: '../assets/sound_off.png',
-        title: '../assets/title.png',
-        start_bg: '../assets/start.png', // Add start screen background
+        player: '/game_egogame/assets/player.png',
+        tiles: '/game_egogame/assets/tiles.png',
+        npc_luna: '/game_egogame/assets/npc_luna.png',
+        npc_khan: '/game_egogame/assets/npc_khan.png',
+        npc_mio: '/game_egogame/assets/npc_mio.png',
+        ui: '/game_egogame/assets/ui.png',
+        background: '/game_egogame/assets/background.png',
+        sound_on: '/game_egogame/assets/sound_on.png',
+        sound_off: '/game_egogame/assets/sound_off.png',
+        title: '/game_egogame/assets/title.png',
+        start_bg: '/game_egogame/assets/start.png', // Add start screen background
     });
 
     // Initialize SoundManager after other initializations
