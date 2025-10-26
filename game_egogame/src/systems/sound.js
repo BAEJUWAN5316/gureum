@@ -11,11 +11,11 @@ export class SoundManager {
         this.lastVolume = this.volume;
 
         this.soundPaths = {
-            jump: '/game_egogame/assets/sounds/jump.wav',
-            dialogue_next: '/game_egogame/assets/sounds/dialogue_next.wav',
-            recruit_success: '/game_egogame/assets/sounds/recruit_success.wav',
-            door_open: '/game_egogame/assets/sounds/door_open.wav',
-            background_music: '/game_egogame/assets/sounds/background_music.wav',
+            jump: '../assets/sounds/jump.wav',
+            dialogue_next: '../assets/sounds/dialogue_next.wav',
+            recruit_success: '../assets/sounds/recruit_success.wav',
+            door_open: '../assets/sounds/door_open.wav',
+            background_music: '../assets/sounds/background_music.wav',
         };
 
         this.bgmSource = null; // To store the background music AudioBufferSourceNode
