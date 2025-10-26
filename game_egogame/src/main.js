@@ -85,23 +85,23 @@ async function initGameAssets() {
     const npcData = await response.json();
 
     // Load PRODUCT_URL from url.txt
-    const urlResponse = await fetch('url.txt');
+    const urlResponse = await fetch('./url.txt');
     PRODUCT_URL = await urlResponse.text();
     
 
     // Load images
     await assetLoader.loadImages({
-        player: 'assets/player.png',
-        tiles: 'assets/tiles.png',
-        npc_luna: 'assets/npc_luna.png',
-        npc_khan: 'assets/npc_khan.png',
-        npc_mio: 'assets/npc_mio.png',
-        ui: 'assets/ui.png',
-        background: 'assets/background.png',
-        sound_on: 'assets/sound_on.png',
-        sound_off: 'assets/sound_off.png',
-        title: 'assets/title.png',
-        start_bg: 'assets/start.png', // Add start screen background
+        player: './assets/player.png',
+        tiles: './assets/tiles.png',
+        npc_luna: './assets/npc_luna.png',
+        npc_khan: './assets/npc_khan.png',
+        npc_mio: './assets/npc_mio.png',
+        ui: './assets/ui.png',
+        background: './assets/background.png',
+        sound_on: './assets/sound_on.png',
+        sound_off: './assets/sound_off.png',
+        title: './assets/title.png',
+        start_bg: './assets/start.png', // Add start screen background
     });
 
     // Initialize SoundManager after other initializations
