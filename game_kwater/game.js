@@ -162,7 +162,7 @@ const gameState = {
     totalDrops: 4,
     lastFrameTime: 0,
     deltaTime: 0,
-    debugMode: true, // 디버깅 로그 활성화
+    debugMode: false, // 디버깅 로그 (필요시 true로 변경)
     jumpDebugLogged: false
 };
 
@@ -486,12 +486,14 @@ function updateGame() {
     // 점프 처리: 조이스틱 위로 밀기 (Y < -0.3) 또는 키보드 입력
     // 더 낮은 임계값(-0.3)으로 모바일에서 더 쉽게 점프할 수 있도록
     const joystickJump = joystick.isActive && joystick.inputY < -0.3;
+    let jumpThisFrame = false;
     if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
         // 점프 힘은 timeScale을 적용하지 않음 (초기 velocityY 설정)
         // 이 값은 매 프레임 중력으로 감소함
         player.velocityY = -player.jumpPower;
         player.isJumping = true;
         player.canJump = false;
+        jumpThisFrame = true; // 이 프레임에 점프가 발생했음을 표시
 
         // 디버깅 로그 (첫 점프에만)
         if (!gameState.jumpDebugLogged) {
@@ -506,8 +508,8 @@ function updateGame() {
         jumpSound.play().catch(() => {});
     }
 
-    // 중력 적용
-    if (!player.canJump) {
+    // 중력 적용 (점프 직후 첫 프레임은 제외 - 점프 velocityY가 이미 설정됨)
+    if (!player.canJump && !jumpThisFrame) {
         player.velocityY += physics.gravity * timeScale;
         if (player.velocityY > physics.maxFallSpeed) {
             player.velocityY = physics.maxFallSpeed;
