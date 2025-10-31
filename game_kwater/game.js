@@ -99,14 +99,18 @@ clearSound.volume = 0.7;
 // 캔버스 크기 설정 (게임 전체 화면 사용)
 function resizeCanvas() {
     const container = document.getElementById('gamePage');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
 
-    // 모바일에서 캔버스 렌더링 최적화
+    // CSS 크기 설정
+    canvas.style.width = container.clientWidth + 'px';
+    canvas.style.height = container.clientHeight + 'px';
+
+    // 실제 캔버스 해상도
     const dpr = window.devicePixelRatio || 1;
+    canvas.width = container.clientWidth * dpr;
+    canvas.height = container.clientHeight * dpr;
+
+    // High-DPI 스케일링
     if (dpr > 1) {
-        canvas.width *= dpr;
-        canvas.height *= dpr;
         ctx.scale(dpr, dpr);
     }
 }
@@ -582,23 +586,35 @@ function drawBackground() {
 
 function drawPlayer() {
     // character 이미지 그리기
-    if (characterImage && characterImage.complete) {
-        const imgHeight = player.height;
-        // 이미지 비율 유지하며 높이에 맞춤
-        const imgWidth = (characterImage.width / characterImage.height) * imgHeight;
-        const xOffset = (player.width - imgWidth) / 2; // 중앙 정렬
+    if (characterImage && characterImage.complete && characterImage.width > 0) {
+        try {
+            const imgHeight = player.height;
+            // 이미지 비율 유지하며 높이에 맞춤
+            const imgWidth = (characterImage.width / characterImage.height) * imgHeight;
+            const xOffset = (player.width - imgWidth) / 2; // 중앙 정렬
 
-        // 방향에 따라 이미지 반전
-        ctx.save();
-        if (player.direction === -1) {
-            // 왼쪽 방향: 좌우 반전
-            ctx.scale(-1, 1);
-            ctx.drawImage(characterImage, -(player.x + xOffset + imgWidth), player.y, imgWidth, imgHeight);
-        } else {
-            // 오른쪽 방향: 일반
-            ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
+            // 방향에 따라 이미지 반전
+            ctx.save();
+            ctx.globalAlpha = 1; // 투명도 확인
+
+            if (player.direction === -1) {
+                // 왼쪽 방향: 좌우 반전
+                ctx.translate(player.x + player.width / 2, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(characterImage, -player.width / 2 - imgWidth / 2 + xOffset, player.y, imgWidth, imgHeight);
+            } else {
+                // 오른쪽 방향: 일반
+                ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
+            }
+            ctx.restore();
+        } catch (e) {
+            console.error('캐릭터 렌더링 오류:', e);
+            // 오류 시 대체 그래픽
+            ctx.fillStyle = '#FF6B9D';
+            ctx.beginPath();
+            ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2);
+            ctx.fill();
         }
-        ctx.restore();
     } else {
         // 이미지 로딩 중일 때 대체 그래픽 (간단한 원형)
         ctx.fillStyle = '#FF6B9D';
