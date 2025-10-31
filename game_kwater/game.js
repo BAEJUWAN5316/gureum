@@ -163,7 +163,8 @@ const gameState = {
     lastFrameTime: 0,
     deltaTime: 0,
     debugMode: false, // 디버깅 로그 (필요시 true로 변경)
-    jumpDebugLogged: false
+    jumpDebugLogged: false,
+    jumpFrameCount: 0
 };
 
 // 플레이어 객체
@@ -209,7 +210,8 @@ const joystick = {
     maxDistance: 40, // 최대 이동 거리
     inputX: 0,
     inputY: 0,
-    touchId: null
+    touchId: null,
+    wasJumpInputDown: false  // 이전 프레임에 점프 입력이 있었는지
 };
 
 // ========== 게임 초기화 ==========
@@ -443,6 +445,7 @@ function resetJoystick() {
     joystick.inputX = 0;
     joystick.inputY = 0;
     joystick.touchId = null;
+    joystick.wasJumpInputDown = false; // 점프 입력 상태도 초기화
 
     const handle = document.getElementById('joystickHandle');
     if (handle) {
@@ -486,27 +489,42 @@ function updateGame() {
     // 점프 처리: 조이스틱 위로 밀기 (Y < -0.3) 또는 키보드 입력
     // 더 낮은 임계값(-0.3)으로 모바일에서 더 쉽게 점프할 수 있도록
     const joystickJump = joystick.isActive && joystick.inputY < -0.3;
+    const keyboardJump = keys[' '] || keys['w'];
+    const jumpInputDown = joystickJump || keyboardJump;
+
     let jumpThisFrame = false;
-    if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
+
+    // 점프 입력이 새로 감지되었을 때만 (이전 프레임에는 없었을 때)
+    if (jumpInputDown && !joystick.wasJumpInputDown && player.canJump) {
         // 점프 힘은 timeScale을 적용하지 않음 (초기 velocityY 설정)
         // 이 값은 매 프레임 중력으로 감소함
         player.velocityY = -player.jumpPower;
         player.isJumping = true;
         player.canJump = false;
         jumpThisFrame = true; // 이 프레임에 점프가 발생했음을 표시
+        gameState.jumpFrameCount = 0; // 점프 프레임 카운터 리셋
 
         // 디버깅 로그 (첫 점프에만)
         if (!gameState.jumpDebugLogged) {
-            console.log('점프 실행! jumpPower:', player.jumpPower, 'joystick.inputY:', joystick.inputY);
-            console.log('timeScale:', gameState.deltaTime / 0.016);
+            console.log('=== 점프 실행! ===');
+            console.log('jumpPower:', player.jumpPower);
+            console.log('joystickJump:', joystickJump);
+            console.log('keyboardJump:', keyboardJump);
+            console.log('joystick.inputY:', joystick.inputY.toFixed(3));
+            console.log('player.canJump (점프 전):', true);
+            console.log('timeScale:', (gameState.deltaTime / 0.016).toFixed(4));
+            console.log('window.devicePixelRatio:', window.devicePixelRatio);
             gameState.jumpDebugLogged = true;
-            setTimeout(() => { gameState.jumpDebugLogged = false; }, 100);
+            setTimeout(() => { gameState.jumpDebugLogged = false; }, 200);
         }
 
         // 점프 사운드 재생
         jumpSound.currentTime = 0;
         jumpSound.play().catch(() => {});
     }
+
+    // 점프 입력 상태 업데이트 (다음 프레임에서 사용)
+    joystick.wasJumpInputDown = jumpInputDown;
 
     // 중력 적용 (점프 직후 첫 프레임은 제외 - 점프 velocityY가 이미 설정됨)
     if (!player.canJump && !jumpThisFrame) {
@@ -520,9 +538,10 @@ function updateGame() {
     player.x += player.velocityX;
     player.y += player.velocityY;
 
-    // 디버깅: 점프 중 Y 좌표 변화 로깅
-    if (gameState.debugMode && player.isJumping) {
-        console.log('점프 중 - y:', Math.round(player.y), 'velocityY:', player.velocityY.toFixed(2), 'gravity applied:', (physics.gravity * timeScale).toFixed(4));
+    // 디버깅: 점프 중 Y 좌표 변화 로깅 (처음 10프레임만)
+    if (gameState.debugMode && player.isJumping && gameState.jumpFrameCount < 10) {
+        gameState.jumpFrameCount++;
+        console.log(`점프 프레임 ${gameState.jumpFrameCount} - y: ${Math.round(player.y)}, velocityY: ${player.velocityY.toFixed(3)}, gravity*timeScale: ${(physics.gravity * timeScale).toFixed(4)}, jumpThisFrame: ${jumpThisFrame}`);
     }
 
     // 화면 경계 처리
