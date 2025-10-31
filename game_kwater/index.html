@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#87ceeb">
+    <title>방울이의 물방울 찾기 이벤트</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 터치 최적화 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- 이벤트 메인 페이지 -->
+    <div id="mainPage" class="page active">
+        <div class="main-container">
+            <header class="header">
+                <img src="assets/logo.png" alt="K-Water 로고" class="logo">
+                <h1>방울이의 물방울 찾기</h1>
+            </header>
+
+            <div class="content">
+                <div class="character-illustration">
+                    <img src="assets/character.png" alt="방울이" class="main-character-img">
+                </div>
+
+                <div class="event-description">
+                    <h2>K-Water와 함께 물을 아껴보세요!</h2>
+                    <p>친환경 물 절약 캠페인 이벤트에 참여하고 소중한 이모티콘을 받아보세요.</p>
+                    <p>방울이를 조종해 물방울 4개를 모두 찾아보세요!</p>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToGame()">게임 시작하기</button>
+            </div>
+
+            <footer class="footer">
+                <p>&copy; 2024 K-Water. 모든 권리 보유.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 게임 페이지 -->
+    <div id="gamePage" class="page">
+        <div class="game-container">
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- 게임 UI -->
+            <!-- 점수 정보 (화면 왼쪽 위) -->
+            <div class="score-info">
+                <p>물방울: <span id="dropCount">0</span>/4</p>
+            </div>
+
+            <!-- 가상 조이스틱 (화면 왼쪽 하단) -->
+            <div id="virtualJoystick" class="virtual-joystick">
+                <div class="joystick-background">
+                    <div id="joystickHandle" class="joystick-handle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 클리어 페이지 -->
+    <div id="clearPage" class="page">
+        <div class="clear-container">
+            <div class="clear-content">
+                <div class="celebration">🎉</div>
+                <h1>축하합니다!</h1>
+                <p>방울이가 모든 물방울을 찾았습니다.</p>
+                <p>이모티콘을 받을 수 있습니다.</p>
+
+                <button class="btn btn-primary" onclick="goToForm()">이모티콘 받기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 개인정보 입력 페이지 -->
+    <div id="formPage" class="page">
+        <div class="form-container">
+            <h1>축하합니다!</h1>
+            <form id="infoForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name" required placeholder="이름을 입력해주세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">전화번호</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
+                </div>
+
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="agree" name="agree" required>
+                    <label for="agree">개인정보 수집에 동의합니다.</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">제출하기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 이벤트 종료 페이지 -->
+    <div id="endPage" class="page">
+        <div class="end-container">
+            <div class="end-content">
+                <div class="celebration">✨</div>
+                <h1>이벤트 참여 감사합니다!</h1>
+                <p>이모티콘이 곧 전송됩니다.</p>
+
+                <img src="assets/logo.png" alt="K-Water 로고" class="end-logo">
+
+                <div class="social-buttons">
+                    <button class="btn btn-social" onclick="shareOnSNS('kakao')">카카오톡 공유</button>
+                    <button class="btn btn-social" onclick="shareOnSNS('twitter')">트위터 공유</button>
+                    <button class="btn btn-social" onclick="shareOnSNS('facebook')">페이스북 공유</button>
+                </div>
+
+                <button class="btn btn-secondary" onclick="goToMain()">메인으로 돌아가기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

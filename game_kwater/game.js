@@ -1,0 +1,678 @@
+// ========== 페이지 네비게이션 ==========
+function showPage(pageId) {
+    // 모든 페이지 숨김
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+
+    // 선택한 페이지만 표시
+    const page = document.getElementById(pageId);
+    if (page) {
+        page.classList.add('active');
+    }
+}
+
+function goToMain() {
+    showPage('mainPage');
+    // 배경음악 정지
+    bgmAudio.pause();
+}
+
+function goToGame() {
+    showPage('gamePage');
+    initGame();
+}
+
+function goToForm() {
+    showPage('formPage');
+    document.getElementById('infoForm').reset();
+}
+
+function goToClear() {
+    showPage('clearPage');
+    // 배경음악 정지
+    bgmAudio.pause();
+}
+
+function submitForm(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const agree = document.getElementById('agree').checked;
+
+    // 콘솔에 데이터 출력 (DB 저장 없음)
+    console.log('=== 제출된 정보 ===');
+    console.log('이름:', name);
+    console.log('전화번호:', phone);
+    console.log('개인정보 동의:', agree);
+    console.log('==================');
+
+    // 이벤트 종료 페이지로 이동
+    showPage('endPage');
+}
+
+function shareOnSNS(platform) {
+    console.log(`${platform}에 공유되었습니다.`);
+    // 실제 구현 시 SNS 공유 API 연동
+    alert(`${platform}에 공유했습니다!`);
+}
+
+// ========== 게임 설정 ==========
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// 캐릭터 이미지
+let characterImage = new Image();
+characterImage.src = 'assets/character.png';
+
+// 아이템(물방울) 이미지
+let itemImage = new Image();
+itemImage.src = 'assets/item.png';
+
+// 배경 이미지
+let backgroundImage = new Image();
+backgroundImage.src = 'assets/background.png';
+
+// 발판 이미지
+let platformImage = new Image();
+platformImage.src = 'assets/platform.png';
+
+// 땅(바닥) 이미지
+let groundImage = new Image();
+groundImage.src = 'assets/ground.png';
+
+// ========== 음향 설정 ==========
+// 배경음악
+const bgmAudio = new Audio('assets/bgm.mp3');
+bgmAudio.loop = true;
+bgmAudio.volume = 0.5;
+
+// 효과음들
+const jumpSound = new Audio('assets/jump.wav');
+jumpSound.volume = 0.6;
+
+const collectSound = new Audio('assets/collect.wav');
+collectSound.volume = 0.6;
+
+const clearSound = new Audio('assets/clear.wav');
+clearSound.volume = 0.7;
+
+// 캔버스 크기 설정 (게임 전체 화면 사용)
+function resizeCanvas() {
+    const container = document.getElementById('gamePage');
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+
+    // 모바일에서 캔버스 렌더링 최적화
+    const dpr = window.devicePixelRatio || 1;
+    if (dpr > 1) {
+        canvas.width *= dpr;
+        canvas.height *= dpr;
+        ctx.scale(dpr, dpr);
+    }
+}
+
+// 게임 상태
+const gameState = {
+    isRunning: false,
+    dropsCollected: 0,
+    totalDrops: 4
+};
+
+// 플레이어 객체
+const player = {
+    x: 100,
+    y: 0,
+    width: 40,
+    height: 50,
+    velocityX: 0,
+    velocityY: 0,
+    speed: 5,
+    jumpPower: 15,
+    isJumping: false,
+    isFalling: false,
+    canJump: false,
+    direction: 1 // 1: 오른쪽, -1: 왼쪽
+};
+
+// 중력과 물리
+const physics = {
+    gravity: 0.6,
+    friction: 0.8,
+    maxFallSpeed: 15
+};
+
+// 플랫폼 배열
+let platforms = [];
+
+// 아이템 (물방울) 배열
+let drops = [];
+
+// 키 입력 상태
+const keys = {};
+
+// 가상 조이스틱 상태
+const joystick = {
+    isActive: false,
+    x: 0,
+    y: 0,
+    centerX: 0,
+    centerY: 0,
+    radius: 65, // 조이스틱 반지름
+    maxDistance: 40, // 최대 이동 거리
+    inputX: 0,
+    inputY: 0,
+    touchId: null
+};
+
+// ========== 게임 초기화 ==========
+function initGame() {
+    resizeCanvas();
+    gameState.isRunning = true;
+    gameState.dropsCollected = 0;
+
+    // 플레이어 초기 위치 설정
+    player.x = canvas.width / 2 - player.width / 2;
+    player.y = canvas.height - 150;
+    player.velocityX = 0;
+    player.velocityY = 0;
+    player.isJumping = false;
+    player.isFalling = false;
+    player.canJump = false;
+
+    // 플랫폼 생성
+    createPlatforms();
+
+    // 물방울 생성
+    createDrops();
+
+    // 가상 조이스틱 초기화
+    initializeVirtualJoystick();
+
+    // 배경음악 재생
+    bgmAudio.currentTime = 0;
+    bgmAudio.play().catch(() => {
+        // 자동 재생 실패 시 무시 (모바일에서 사용자 인터랙션 필요)
+    });
+
+    // 게임 루프 시작
+    gameLoop();
+}
+
+function createPlatforms() {
+    platforms = [];
+
+    // 바닥
+    platforms.push({
+        x: 0,
+        y: canvas.height - 50,
+        width: canvas.width,
+        height: 50,
+        color: '#87CEEB'
+    });
+
+    // 플랫폼들 (다양한 높이에 배치)
+    const platformConfigs = [
+        { x: 50, y: canvas.height - 150, width: 150, height: 20 },
+        { x: canvas.width - 200, y: canvas.height - 200, width: 150, height: 20 },
+        { x: 100, y: canvas.height - 300, width: 150, height: 20 },
+        { x: canvas.width - 150, y: canvas.height - 350, width: 150, height: 20 },
+        { x: canvas.width / 2 - 75, y: canvas.height - 450, width: 150, height: 20 }
+    ];
+
+    platformConfigs.forEach(config => {
+        platforms.push({
+            x: config.x,
+            y: config.y,
+            width: config.width,
+            height: config.height,
+            color: '#ADD8E6'
+        });
+    });
+}
+
+function createDrops() {
+    drops = [];
+
+    // 물방울 4개를 서로 다른 플랫폼에 배치
+    const dropPositions = [
+        { x: 120, y: canvas.height - 180 },
+        { x: canvas.width - 130, y: canvas.height - 230 },
+        { x: 170, y: canvas.height - 330 },
+        { x: canvas.width - 100, y: canvas.height - 380 }
+    ];
+
+    dropPositions.forEach((pos, index) => {
+        drops.push({
+            x: pos.x,
+            y: pos.y,
+            radius: 15,
+            collected: false,
+            color: '#1E90FF',
+            glowIntensity: 0,
+            id: index
+        });
+    });
+}
+
+// ========== 가상 조이스틱 초기화 ==========
+function initializeVirtualJoystick() {
+    const joystickElement = document.getElementById('virtualJoystick');
+    if (!joystickElement) return;
+
+    const rect = joystickElement.getBoundingClientRect();
+    joystick.centerX = rect.left + rect.width / 2;
+    joystick.centerY = rect.top + rect.height / 2;
+
+    // 터치 이벤트
+    document.addEventListener('touchstart', handleJoystickTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleJoystickTouchMove, { passive: false });
+    document.addEventListener('touchend', handleJoystickTouchEnd);
+
+    // 마우스 이벤트 (디버깅/데스크톱)
+    document.addEventListener('mousedown', handleJoystickMouseDown);
+    document.addEventListener('mousemove', handleJoystickMouseMove);
+    document.addEventListener('mouseup', handleJoystickMouseUp);
+}
+
+// 터치 시작
+function handleJoystickTouchStart(e) {
+    const touch = e.touches[0];
+    const joystickElement = document.getElementById('virtualJoystick');
+    if (!joystickElement) return;
+
+    const rect = joystickElement.getBoundingClientRect();
+    const dx = touch.clientX - rect.left - rect.width / 2;
+    const dy = touch.clientY - rect.top - rect.height / 2;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // 조이스틱 영역 내에서만 활성화
+    if (distance < rect.width / 2) {
+        e.preventDefault();
+        joystick.isActive = true;
+        joystick.touchId = touch.identifier;
+        updateJoystickPosition(touch.clientX, touch.clientY);
+    }
+}
+
+// 터치 이동
+function handleJoystickTouchMove(e) {
+    if (!joystick.isActive) return;
+
+    for (let i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].identifier === joystick.touchId) {
+            e.preventDefault();
+            updateJoystickPosition(e.touches[i].clientX, e.touches[i].clientY);
+            break;
+        }
+    }
+}
+
+// 터치 종료
+function handleJoystickTouchEnd(e) {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === joystick.touchId) {
+            resetJoystick();
+            break;
+        }
+    }
+}
+
+// 마우스 이벤트 (데스크톱)
+function handleJoystickMouseDown(e) {
+    const joystickElement = document.getElementById('virtualJoystick');
+    if (!joystickElement || !joystickElement.contains(e.target)) return;
+
+    const rect = joystickElement.getBoundingClientRect();
+    const dx = e.clientX - rect.left - rect.width / 2;
+    const dy = e.clientY - rect.top - rect.height / 2;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < rect.width / 2) {
+        joystick.isActive = true;
+        updateJoystickPosition(e.clientX, e.clientY);
+    }
+}
+
+function handleJoystickMouseMove(e) {
+    if (!joystick.isActive) return;
+    updateJoystickPosition(e.clientX, e.clientY);
+}
+
+function handleJoystickMouseUp() {
+    resetJoystick();
+}
+
+// 조이스틱 위치 업데이트
+function updateJoystickPosition(clientX, clientY) {
+    const joystickElement = document.getElementById('virtualJoystick');
+    const rect = joystickElement.getBoundingClientRect();
+
+    // 조이스틱 중심으로부터의 거리
+    let dx = clientX - (rect.left + rect.width / 2);
+    let dy = clientY - (rect.top + rect.height / 2);
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDist = joystick.maxDistance;
+
+    // 최대 거리 제한
+    if (distance > maxDist) {
+        const angle = Math.atan2(dy, dx);
+        joystick.x = Math.cos(angle) * maxDist;
+        joystick.y = Math.sin(angle) * maxDist;
+    } else {
+        joystick.x = dx;
+        joystick.y = dy;
+    }
+
+    // 정규화된 입력값 (0~1)
+    joystick.inputX = joystick.x / maxDist;
+    joystick.inputY = joystick.y / maxDist;
+
+    // 핸들 위치 업데이트
+    const handle = document.getElementById('joystickHandle');
+    if (handle) {
+        const offsetX = (joystick.x / maxDist) * 40;
+        const offsetY = (joystick.y / maxDist) * 40;
+        handle.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+    }
+}
+
+// 조이스틱 리셋
+function resetJoystick() {
+    joystick.isActive = false;
+    joystick.x = 0;
+    joystick.y = 0;
+    joystick.inputX = 0;
+    joystick.inputY = 0;
+    joystick.touchId = null;
+
+    const handle = document.getElementById('joystickHandle');
+    if (handle) {
+        handle.style.transform = 'translate(-50%, -50%)';
+    }
+}
+
+// 터치 이벤트 최적화
+document.addEventListener('touchmove', (e) => {
+    // 게임 화면에서는 기본 스크롤 방지
+    if (e.target.closest('#gamePage')) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+// ========== 게임 업데이트 ==========
+function updateGame() {
+    // 플레이어 움직임 처리 (가상 조이스틱 또는 키보드)
+    player.velocityX = 0;
+
+    // 가상 조이스틱 X축 입력 (좌우 이동)
+    if (Math.abs(joystick.inputX) > 0.2) {
+        player.velocityX = joystick.inputX * player.speed;
+        // 이동 방향 업데이트
+        if (joystick.inputX > 0) {
+            player.direction = -1; // 오른쪽 이동 시 왼쪽 반전
+        } else if (joystick.inputX < 0) {
+            player.direction = 1; // 왼쪽 이동 시 원본
+        }
+    }
+
+    // 점프 처리: 조이스틱 위로 밀기 (Y < -0.5) 또는 키보드 입력
+    const joystickJump = joystick.isActive && joystick.inputY < -0.5;
+    if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
+        player.velocityY = -player.jumpPower;
+        player.isJumping = true;
+        player.canJump = false;
+        // 점프 사운드 재생
+        jumpSound.currentTime = 0;
+        jumpSound.play().catch(() => {});
+    }
+
+    // 중력 적용
+    if (!player.canJump) {
+        player.velocityY += physics.gravity;
+        if (player.velocityY > physics.maxFallSpeed) {
+            player.velocityY = physics.maxFallSpeed;
+        }
+    }
+
+    // 위치 업데이트
+    player.x += player.velocityX;
+    player.y += player.velocityY;
+
+    // 화면 경계 처리
+    if (player.x < 0) {
+        player.x = 0;
+    }
+    if (player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+    }
+
+    // 낙사 처리
+    if (player.y > canvas.height) {
+        player.y = canvas.height - 150;
+        player.velocityY = 0;
+    }
+
+    // 플랫폼 충돌 감지
+    player.canJump = false;
+    platforms.forEach(platform => {
+        if (isColliding(player, platform)) {
+            // 플레이어가 플랫폼 위에 있으면
+            if (player.velocityY >= 0 && player.y + player.height - player.velocityY <= platform.y + 10) {
+                player.y = platform.y - player.height;
+                player.velocityY = 0;
+                player.canJump = true;
+                player.isJumping = false;
+            }
+        }
+    });
+
+    // 물방울 수집 감지
+    drops.forEach(drop => {
+        if (!drop.collected && isCollidingWithDrop(player, drop)) {
+            drop.collected = true;
+            gameState.dropsCollected++;
+            document.getElementById('dropCount').textContent = gameState.dropsCollected;
+
+            // 수집 사운드 재생
+            collectSound.currentTime = 0;
+            collectSound.play().catch(() => {});
+
+            // 모든 물방울 수집 시 클리어
+            if (gameState.dropsCollected === gameState.totalDrops) {
+                gameState.isRunning = false;
+                // 클리어 사운드 재생
+                bgmAudio.pause();
+                clearSound.currentTime = 0;
+                clearSound.play().catch(() => {});
+                setTimeout(() => goToClear(), 500);
+            }
+        }
+    });
+
+    // 물방울 애니메이션
+    drops.forEach(drop => {
+        drop.glowIntensity = (drop.glowIntensity + 0.05) % (Math.PI * 2);
+    });
+}
+
+// 충돌 감지 (플레이어와 플랫폼)
+function isColliding(player, platform) {
+    return (
+        player.x < platform.x + platform.width &&
+        player.x + player.width > platform.x &&
+        player.y < platform.y + platform.height &&
+        player.y + player.height > platform.y
+    );
+}
+
+// 충돌 감지 (플레이어와 물방울)
+function isCollidingWithDrop(player, drop) {
+    const dx = (player.x + player.width / 2) - drop.x;
+    const dy = (player.y + player.height / 2) - drop.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < player.width / 2 + drop.radius;
+}
+
+// ========== 게임 렌더링 ==========
+function drawGame() {
+    // 배경 그리기
+    drawBackground();
+
+    // 플랫폼 그리기
+    platforms.forEach((platform, index) => {
+        // 첫 번째는 바닥(ground), 나머지는 발판(platform)
+        if (index === 0) {
+            // 땅(바닥) 그리기
+            if (groundImage && groundImage.complete) {
+                // 이미지가 로드되면 타일 패턴으로 반복
+                let x = 0;
+                while (x < canvas.width) {
+                    ctx.drawImage(groundImage, x, platform.y, platform.width, platform.height);
+                    x += groundImage.width;
+                }
+            } else {
+                // 이미지 로딩 중일 때 대체 색상
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            }
+        } else {
+            // 발판 그리기
+            if (platformImage && platformImage.complete) {
+                ctx.drawImage(platformImage, platform.x, platform.y, platform.width, platform.height);
+            } else {
+                // 이미지 로딩 중일 때 대체 색상
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+                // 플랫폼 테두리
+                ctx.strokeStyle = '#4682B4';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+            }
+        }
+    });
+
+    // 물방울 그리기
+    drops.forEach(drop => {
+        if (!drop.collected) {
+            drawDrop(drop);
+        }
+    });
+
+    // 플레이어 그리기
+    drawPlayer();
+}
+
+function drawBackground() {
+    // 배경 이미지 그리기
+    if (backgroundImage && backgroundImage.complete) {
+        // 이미지를 캔버스 크기에 맞춰 그리기
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    } else {
+        // 이미지 로딩 중일 때 대체 배경 (하늘 그라데이션)
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#87CEEB');
+        gradient.addColorStop(1, '#E0F6FF');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function drawPlayer() {
+    // character 이미지 그리기
+    if (characterImage && characterImage.complete) {
+        const imgHeight = player.height;
+        // 이미지 비율 유지하며 높이에 맞춤
+        const imgWidth = (characterImage.width / characterImage.height) * imgHeight;
+        const xOffset = (player.width - imgWidth) / 2; // 중앙 정렬
+
+        // 방향에 따라 이미지 반전
+        ctx.save();
+        if (player.direction === -1) {
+            // 왼쪽 방향: 좌우 반전
+            ctx.scale(-1, 1);
+            ctx.drawImage(characterImage, -(player.x + xOffset + imgWidth), player.y, imgWidth, imgHeight);
+        } else {
+            // 오른쪽 방향: 일반
+            ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
+        }
+        ctx.restore();
+    } else {
+        // 이미지 로딩 중일 때 대체 그래픽 (간단한 원형)
+        ctx.fillStyle = '#FF6B9D';
+        ctx.beginPath();
+        ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawDrop(drop) {
+    // 아이템 이미지 그리기
+    if (itemImage && itemImage.complete) {
+        const itemHeight = drop.radius * 2;
+        // 이미지 비율 유지하며 높이에 맞춤
+        const itemWidth = (itemImage.width / itemImage.height) * itemHeight;
+        const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
+
+        // 글로우 효과
+        ctx.fillStyle = `rgba(30, 144, 255, ${0.2 * glowAmount})`;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, itemHeight / 2 + 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 이미지 그리기 (중앙 정렬)
+        ctx.drawImage(itemImage, drop.x - itemWidth / 2, drop.y - itemHeight / 2, itemWidth, itemHeight);
+    } else {
+        // 이미지 로딩 중일 때 대체 그래픽 (원형)
+        const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
+
+        // 글로우 효과
+        ctx.fillStyle = `rgba(30, 144, 255, ${0.3 * glowAmount})`;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, drop.radius + 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 물방울 본체
+        ctx.fillStyle = drop.color;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 물방울 테두리
+        ctx.strokeStyle = '#0047AB';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 반짝임
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.beginPath();
+        ctx.arc(drop.x - 5, drop.y - 5, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// ========== 게임 루프 ==========
+function gameLoop() {
+    if (!gameState.isRunning) {
+        return;
+    }
+
+    updateGame();
+    drawGame();
+
+    requestAnimationFrame(gameLoop);
+}
+
+// ========== 윈도우 리사이즈 처리 ==========
+window.addEventListener('resize', () => {
+    if (gameState.isRunning) {
+        resizeCanvas();
+    }
+});
+
+// ========== 초기화 ==========
+window.addEventListener('DOMContentLoaded', () => {
+    showPage('mainPage');
+});
