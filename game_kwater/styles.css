@@ -167,8 +167,8 @@ html, body {
     display: block;
     background-color: #87ceeb;
     margin: 0 auto;
-    max-width: 100vw;
-    max-height: 100vh;
+    width: 360px;
+    height: 640px;
 }
 
 /* 게임 UI - 점수 정보 */

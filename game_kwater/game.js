@@ -96,21 +96,20 @@ collectSound.volume = 0.6;
 const clearSound = new Audio('assets/clear.wav');
 clearSound.volume = 0.7;
 
-// 캔버스 크기 설정 (게임 전체 화면 사용)
+// 캔버스 크기 설정 (고정 360×640px)
 function resizeCanvas() {
-    const container = document.getElementById('gamePage');
+    // 고정 크기
+    const fixedWidth = 360;
+    const fixedHeight = 640;
 
-    // CSS 크기 설정
-    canvas.style.width = container.clientWidth + 'px';
-    canvas.style.height = container.clientHeight + 'px';
+    canvas.width = fixedWidth;
+    canvas.height = fixedHeight;
 
-    // 실제 캔버스 해상도
+    // 모바일에서 캔버스 렌더링 최적화
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = container.clientWidth * dpr;
-    canvas.height = container.clientHeight * dpr;
-
-    // High-DPI 스케일링
     if (dpr > 1) {
+        canvas.width *= dpr;
+        canvas.height *= dpr;
         ctx.scale(dpr, dpr);
     }
 }
@@ -205,22 +204,22 @@ function initGame() {
 function createPlatforms() {
     platforms = [];
 
-    // 바닥
+    // 바닥 (360×50px)
     platforms.push({
         x: 0,
-        y: canvas.height - 50,
-        width: canvas.width,
+        y: 590,  // 640 - 50
+        width: 360,
         height: 50,
         color: '#87CEEB'
     });
 
     // 플랫폼들 (다양한 높이에 배치)
     const platformConfigs = [
-        { x: 50, y: canvas.height - 150, width: 150, height: 20 },
-        { x: canvas.width - 200, y: canvas.height - 200, width: 150, height: 20 },
-        { x: 100, y: canvas.height - 300, width: 150, height: 20 },
-        { x: canvas.width - 150, y: canvas.height - 350, width: 150, height: 20 },
-        { x: canvas.width / 2 - 75, y: canvas.height - 450, width: 150, height: 20 }
+        { x: 30, y: 470, width: 150, height: 20 },      // 640 - 170
+        { x: 180, y: 420, width: 150, height: 20 },     // 640 - 220
+        { x: 60, y: 340, width: 150, height: 20 },      // 640 - 300
+        { x: 150, y: 290, width: 150, height: 20 },     // 640 - 350
+        { x: 105, y: 210, width: 150, height: 20 }      // 640 - 430
     ];
 
     platformConfigs.forEach(config => {
@@ -237,12 +236,12 @@ function createPlatforms() {
 function createDrops() {
     drops = [];
 
-    // 물방울 4개를 서로 다른 플랫폼에 배치
+    // 물방울 4개를 서로 다른 플랫폼에 배치 (고정 캔버스 360×640px 기준)
     const dropPositions = [
-        { x: 120, y: canvas.height - 180 },
-        { x: canvas.width - 130, y: canvas.height - 230 },
-        { x: 170, y: canvas.height - 330 },
-        { x: canvas.width - 100, y: canvas.height - 380 }
+        { x: 120, y: 460 },   // 640 - 180
+        { x: 230, y: 410 },   // 360 - 130 = 230, 640 - 230
+        { x: 170, y: 310 },   // 640 - 330
+        { x: 260, y: 260 }    // 360 - 100 = 260, 640 - 380
     ];
 
     dropPositions.forEach((pos, index) => {
