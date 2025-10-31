@@ -161,7 +161,9 @@ const gameState = {
     dropsCollected: 0,
     totalDrops: 4,
     lastFrameTime: 0,
-    deltaTime: 0
+    deltaTime: 0,
+    debugMode: true, // 디버깅 로그 활성화
+    jumpDebugLogged: false
 };
 
 // 플레이어 객체
@@ -339,6 +341,10 @@ function handleJoystickTouchStart(e) {
         joystick.isActive = true;
         joystick.touchId = touch.identifier;
         updateJoystickPosition(touch.clientX, touch.clientY);
+
+        if (gameState.debugMode) {
+            console.log('터치 시작! dy:', dy.toFixed(2), 'inputY:', joystick.inputY.toFixed(2));
+        }
     }
 }
 
@@ -350,6 +356,10 @@ function handleJoystickTouchMove(e) {
         if (e.touches[i].identifier === joystick.touchId) {
             e.preventDefault();
             updateJoystickPosition(e.touches[i].clientX, e.touches[i].clientY);
+
+            if (gameState.debugMode && joystick.inputY < -0.2) {
+                console.log('터치 이동 - inputY:', joystick.inputY.toFixed(2));
+            }
             break;
         }
     }
@@ -438,6 +448,11 @@ function resetJoystick() {
     if (handle) {
         handle.style.transform = 'translate(-50%, -50%)';
     }
+
+    // 디버깅: 조이스틱이 제대로 초기화되는지 로그
+    if (gameState.debugMode) {
+        console.log('조이스틱 리셋 - inputY:', joystick.inputY);
+    }
 }
 
 // 터치 이벤트 최적화
@@ -468,12 +483,24 @@ function updateGame() {
         }
     }
 
-    // 점프 처리: 조이스틱 위로 밀기 (Y < -0.5) 또는 키보드 입력
-    const joystickJump = joystick.isActive && joystick.inputY < -0.5;
+    // 점프 처리: 조이스틱 위로 밀기 (Y < -0.3) 또는 키보드 입력
+    // 더 낮은 임계값(-0.3)으로 모바일에서 더 쉽게 점프할 수 있도록
+    const joystickJump = joystick.isActive && joystick.inputY < -0.3;
     if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
-        player.velocityY = -player.jumpPower * timeScale;
+        // 점프 힘은 timeScale을 적용하지 않음 (초기 velocityY 설정)
+        // 이 값은 매 프레임 중력으로 감소함
+        player.velocityY = -player.jumpPower;
         player.isJumping = true;
         player.canJump = false;
+
+        // 디버깅 로그 (첫 점프에만)
+        if (!gameState.jumpDebugLogged) {
+            console.log('점프 실행! jumpPower:', player.jumpPower, 'joystick.inputY:', joystick.inputY);
+            console.log('timeScale:', gameState.deltaTime / 0.016);
+            gameState.jumpDebugLogged = true;
+            setTimeout(() => { gameState.jumpDebugLogged = false; }, 100);
+        }
+
         // 점프 사운드 재생
         jumpSound.currentTime = 0;
         jumpSound.play().catch(() => {});
@@ -490,6 +517,11 @@ function updateGame() {
     // 위치 업데이트
     player.x += player.velocityX;
     player.y += player.velocityY;
+
+    // 디버깅: 점프 중 Y 좌표 변화 로깅
+    if (gameState.debugMode && player.isJumping) {
+        console.log('점프 중 - y:', Math.round(player.y), 'velocityY:', player.velocityY.toFixed(2), 'gravity applied:', (physics.gravity * timeScale).toFixed(4));
+    }
 
     // 화면 경계 처리
     if (player.x < 0) {
