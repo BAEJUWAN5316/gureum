@@ -176,7 +176,7 @@ const player = {
     velocityX: 0,
     velocityY: 0,
     speed: 6,  // 이동 속도 (timeScale 적용됨, 1초에 픽셀 수)
-    jumpPower: 12,  // 점프력 증가 (높이 올림, 속도는 gravity로 조절)
+    jumpPower: 7,  // 점프력 증가 (높이 올림, 속도는 gravity로 조절)
     isJumping: false,
     isFalling: false,
     canJump: false,
@@ -185,7 +185,7 @@ const player = {
 
 // 중력과 물리
 const physics = {
-    gravity: 0.25,  // 중력 더 감소 (점프 속도 완화, 체공 시간 증가)
+    gravity: 0.10,  // 중력 더 감소 (점프 속도 완화, 체공 시간 증가)
     friction: 0.8,
     maxFallSpeed: 15
 };
