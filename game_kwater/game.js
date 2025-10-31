@@ -175,8 +175,8 @@ const player = {
     height: 50,
     velocityX: 0,
     velocityY: 0,
-    speed: 6,  // 이동 속도 (timeScale 적용됨, 1초에 픽셀 수)
-    jumpPower: 3,  // 점프력 증가 (높이 올림, 속도는 gravity로 조절)
+    speed: 4.5,  // 이동 속도 (timeScale 적용됨, 1초에 픽셀 수)
+    jumpPower: 10,  // 점프력 증가 (높이 올림, 속도는 gravity로 조절)
     isJumping: false,
     isFalling: false,
     canJump: false,
@@ -185,7 +185,7 @@ const player = {
 
 // 중력과 물리
 const physics = {
-    gravity: 0.10,  // 중력 더 감소 (점프 속도 완화, 체공 시간 증가)
+    gravity: 0.30,  // 중력 더 감소 (점프 속도 완화, 체공 시간 증가)
     friction: 0.8,
     maxFallSpeed: 15
 };
@@ -469,12 +469,14 @@ function updateGame() {
     // deltaTime 기반 속도 계산 (프레임 레이트 독립적)
     // 기준: 60FPS (0.016초)에서 현재 속도값들이 정의되어 있음
     //
-    // 중요한 개념:
-    // - 점프와 중력: timeScale 미적용 (매 프레임 고정 값으로 누적)
-    // - 이동속도: timeScale 적용 (시간 기반 이동)
-    // - player.y += player.velocityY 처럼 매 프레임 위치 업데이트되기 때문
-    //   점프는 고정값이 매 프레임 누적되어야 하고
-    //   이동은 시간에 따라 조절되어야 함
+    // timeScale 적용 원칙:
+    // - 이동속도: timeScale 적용 (velocityX = inputX × speed × timeScale)
+    // - 점프 초기속도: timeScale 적용 (velocityY = -jumpPower × timeScale)
+    // - 중력: timeScale 적용 (gravity = physics.gravity × timeScale)
+    //
+    // 결과: 모든 기기(60FPS PC, 120FPS 모바일 등)에서 완전히 동일한 체험!
+    // 60FPS: 큰값 × 적은 프레임 = 총합
+    // 120FPS: 작은값 × 많은 프레임 = 총합
     const timeScale = gameState.deltaTime / 0.016;
 
     // 디버깅: 매 프레임 정보 (처음 3프레임만)
@@ -511,9 +513,10 @@ function updateGame() {
     const joystickJump = joystick.isActive && joystick.inputY < -0.3;
     let jumpThisFrame = false;
     if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
-        // 점프 힘은 timeScale을 적용하지 않음 (초기 velocityY 설정)
+        // 점프 힘에 timeScale 적용 (모든 기기에서 동일한 체험)
+        // timeScale: 60FPS=1.0, 120FPS=0.5 등으로 자동 조절
         // 이 값은 매 프레임 중력으로 감소함
-        player.velocityY = -player.jumpPower;
+        player.velocityY = -player.jumpPower * timeScale;
         player.isJumping = true;
         player.canJump = false;
         jumpThisFrame = true; // 이 프레임에 점프가 발생했음을 표시
@@ -526,6 +529,7 @@ function updateGame() {
             console.log('joystick.inputY:', joystick.inputY.toFixed(3));
             console.log('player.canJump (점프 전):', true);
             console.log('timeScale:', (gameState.deltaTime / 0.016).toFixed(4));
+            console.log('jumpPower * timeScale:', (player.jumpPower * timeScale).toFixed(3));
             console.log('window.devicePixelRatio:', window.devicePixelRatio);
             console.log('deltaTime:', gameState.deltaTime.toFixed(6));
             gameState.jumpDebugLogged = true;
@@ -538,12 +542,11 @@ function updateGame() {
     }
 
     // 중력 적용 (점프 직후 첫 프레임은 제외 - 점프 velocityY가 이미 설정됨)
-    // 주의: 중력에는 timeScale을 적용하지 않음!
-    // 왜냐하면 jumpPower는 timeScale이 없으므로, 중력도 없어야 균형을 맞춤
-    // 위치 업데이트에서 player.y += player.velocityY를 하므로 실제 위치 변화는 deltaTime을 통해 자동으로 적용됨
+    // 중력에 timeScale 적용 (점프와 일관성 유지, 모든 기기에서 동일한 체험)
+    // jumpPower가 timeScale을 적용받으므로, 중력도 같이 적용받아야 균형을 맞춤
     let gravityApplied = 0;
     if (!player.canJump && !jumpThisFrame) {
-        gravityApplied = physics.gravity;  // timeScale 제거!
+        gravityApplied = physics.gravity * timeScale;
         player.velocityY += gravityApplied;
         if (player.velocityY > physics.maxFallSpeed) {
             player.velocityY = physics.maxFallSpeed;
