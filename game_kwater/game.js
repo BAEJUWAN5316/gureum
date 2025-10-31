@@ -159,7 +159,9 @@ function resizeCanvas() {
 const gameState = {
     isRunning: false,
     dropsCollected: 0,
-    totalDrops: 4
+    totalDrops: 4,
+    lastFrameTime: 0,
+    deltaTime: 0
 };
 
 // 플레이어 객체
@@ -213,6 +215,8 @@ function initGame() {
     resizeCanvas();
     gameState.isRunning = true;
     gameState.dropsCollected = 0;
+    gameState.lastFrameTime = 0;  // deltaTime 계산을 위해 초기화
+    gameState.deltaTime = 0.016;
 
     // 플레이어 초기 위치 설정
     player.x = canvas.width / 2 - player.width / 2;
@@ -239,7 +243,7 @@ function initGame() {
     });
 
     // 게임 루프 시작
-    gameLoop();
+    requestAnimationFrame(gameLoop);
 }
 
 function createPlatforms() {
@@ -446,12 +450,16 @@ document.addEventListener('touchmove', (e) => {
 
 // ========== 게임 업데이트 ==========
 function updateGame() {
+    // deltaTime 기반 속도 계산 (프레임 레이트 독립적)
+    // 기준: 60FPS (0.016초)에서 현재 속도값들이 정의되어 있음
+    const timeScale = gameState.deltaTime / 0.016;
+
     // 플레이어 움직임 처리 (가상 조이스틱 또는 키보드)
     player.velocityX = 0;
 
     // 가상 조이스틱 X축 입력 (좌우 이동)
     if (Math.abs(joystick.inputX) > 0.2) {
-        player.velocityX = joystick.inputX * player.speed;
+        player.velocityX = joystick.inputX * player.speed * timeScale;
         // 이동 방향 업데이트
         if (joystick.inputX > 0) {
             player.direction = -1; // 오른쪽 이동 시 왼쪽 반전
@@ -463,7 +471,7 @@ function updateGame() {
     // 점프 처리: 조이스틱 위로 밀기 (Y < -0.5) 또는 키보드 입력
     const joystickJump = joystick.isActive && joystick.inputY < -0.5;
     if ((joystickJump || keys[' '] || keys['w']) && player.canJump) {
-        player.velocityY = -player.jumpPower;
+        player.velocityY = -player.jumpPower * timeScale;
         player.isJumping = true;
         player.canJump = false;
         // 점프 사운드 재생
@@ -473,7 +481,7 @@ function updateGame() {
 
     // 중력 적용
     if (!player.canJump) {
-        player.velocityY += physics.gravity;
+        player.velocityY += physics.gravity * timeScale;
         if (player.velocityY > physics.maxFallSpeed) {
             player.velocityY = physics.maxFallSpeed;
         }
@@ -534,9 +542,10 @@ function updateGame() {
         }
     });
 
-    // 물방울 애니메이션
+    // 물방울 애니메이션 (deltaTime 기반)
+    const glowSpeed = 0.05 * timeScale;
     drops.forEach(drop => {
-        drop.glowIntensity = (drop.glowIntensity + 0.05) % (Math.PI * 2);
+        drop.glowIntensity = (drop.glowIntensity + glowSpeed) % (Math.PI * 2);
     });
 }
 
@@ -651,37 +660,16 @@ function drawPlayer() {
     if (gameState.debugFrame === undefined) {
         gameState.debugFrame = 0;
         console.log('=== drawPlayer 호출됨 ===');
-        console.log('characterImage:', characterImage);
         console.log('characterImage.complete:', characterImage.complete);
         console.log('characterImage.naturalWidth:', characterImage.naturalWidth);
-        console.log('characterImage.naturalHeight:', characterImage.naturalHeight);
         console.log('player.x:', player.x, 'player.y:', player.y);
-        console.log('player.width:', player.width, 'player.height:', player.height);
-        console.log('canvas.width:', canvas.width, 'canvas.height:', canvas.height);
-        console.log('ctx getTransform:', ctx.getTransform());
-        console.log('window.devicePixelRatio:', window.devicePixelRatio);
     }
 
-    // 항상 대체 그래픽으로 플레이어를 표시 (이미지 로드 상태와 관계없이)
-    // 핑크색 사각형
-    ctx.save();
-    ctx.fillStyle = '#FF6B9D';
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    // character 이미지가 로드되었는지 확인
+    const imageLoaded = characterImage && characterImage.complete && characterImage.naturalWidth > 0 && characterImage.naturalHeight > 0;
 
-    // 테두리
-    ctx.strokeStyle = '#FF1493';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(player.x, player.y, player.width, player.height);
-
-    // 플레이어 중심점 표시 (작은 점)
-    ctx.fillStyle = '#FF0000';
-    ctx.beginPath();
-    ctx.arc(player.x + player.width / 2, player.y + player.height / 2, 3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // character 이미지가 로드되면 위에 그리기
-    if (characterImage && characterImage.complete && characterImage.naturalWidth > 0 && characterImage.naturalHeight > 0) {
+    if (imageLoaded) {
+        // 이미지가 로드되면 이미지만 표시
         try {
             const imgHeight = player.height;
             // 이미지 비율 유지하며 높이에 맞춤
@@ -708,11 +696,22 @@ function drawPlayer() {
             }
         } catch (e) {
             console.error('캐릭터 렌더링 오류:', e);
+            // 오류 발생 시 대체 그래픽
+            ctx.fillStyle = '#FF6B9D';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
         }
     } else {
+        // 이미지 로딩 중일 때만 대체 그래픽 표시
         if (gameState.debugFrame === 0) {
             console.log('캐릭터 이미지 미로드 - 대체 그래픽 표시 중');
         }
+        ctx.fillStyle = '#FF6B9D';
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+
+        // 테두리
+        ctx.strokeStyle = '#FF1493';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(player.x, player.y, player.width, player.height);
     }
 }
 
@@ -777,10 +776,19 @@ function drawDrop(drop) {
 }
 
 // ========== 게임 루프 ==========
-function gameLoop() {
+function gameLoop(currentTime) {
     if (!gameState.isRunning) {
         return;
     }
+
+    // deltaTime 계산 (초 단위, 최대 0.016s = 60FPS 기준)
+    if (gameState.lastFrameTime === 0) {
+        gameState.lastFrameTime = currentTime;
+        gameState.deltaTime = 0.016; // 첫 프레임은 기본값
+    } else {
+        gameState.deltaTime = Math.min((currentTime - gameState.lastFrameTime) / 1000, 0.016);
+    }
+    gameState.lastFrameTime = currentTime;
 
     updateGame();
     drawGame();
