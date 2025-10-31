@@ -175,8 +175,8 @@ const player = {
     height: 50,
     velocityX: 0,
     velocityY: 0,
-    speed: 5,
-    jumpPower: 15,
+    speed: 2.5,  // 이동 속도 (timeScale 적용됨, 1초에 픽셀 수)
+    jumpPower: 15,  // 점프력 (timeScale 미적용, 매 프레임 누적)
     isJumping: false,
     isFalling: false,
     canJump: false,
@@ -469,12 +469,12 @@ function updateGame() {
     // deltaTime 기반 속도 계산 (프레임 레이트 독립적)
     // 기준: 60FPS (0.016초)에서 현재 속도값들이 정의되어 있음
     //
-    // 주의: timeScale을 사용하지 않는 이유
-    // - velocityY와 velocityX는 이미 프레임 단위의 픽셀 값
-    // - player.y += player.velocityY 처럼 매 프레임 위치 업데이트됨
-    // - 따라서 프레임 레이트가 높을수록 자동으로 더 많이 업데이트됨
-    // - timeScale을 적용하면 오히려 물리가 망가짐
-    // - 모든 기기에서 동일한 점프 높이와 속도를 보장함
+    // 중요한 개념:
+    // - 점프와 중력: timeScale 미적용 (매 프레임 고정 값으로 누적)
+    // - 이동속도: timeScale 적용 (시간 기반 이동)
+    // - player.y += player.velocityY 처럼 매 프레임 위치 업데이트되기 때문
+    //   점프는 고정값이 매 프레임 누적되어야 하고
+    //   이동은 시간에 따라 조절되어야 함
     const timeScale = gameState.deltaTime / 0.016;
 
     // 디버깅: 매 프레임 정보 (처음 3프레임만)
@@ -488,12 +488,16 @@ function updateGame() {
     }
 
     // 플레이어 움직임 처리 (가상 조이스틱 또는 키보드)
-    // 주의: 움직임에도 timeScale을 적용하지 않음 (위치 업데이트와 일관성 유지)
+    // timeScale을 적용하여 모든 기기에서 동일한 시간 기반 이동 속도 보장
+    // 계산식: velocityX = 입력값 × speed × timeScale
+    // 예) 60FPS에서 inputX=1, speed=2.5, timeScale=1.0 → velocityX=2.5px/frame
+    //     120FPS에서 inputX=1, speed=2.5, timeScale=0.5 → velocityX=1.25px/frame
+    //     결과: 초당 이동 거리는 동일!
     player.velocityX = 0;
 
     // 가상 조이스틱 X축 입력 (좌우 이동)
     if (Math.abs(joystick.inputX) > 0.2) {
-        player.velocityX = joystick.inputX * player.speed;  // timeScale 제거
+        player.velocityX = joystick.inputX * player.speed * timeScale;  // timeScale 적용!
         // 이동 방향 업데이트
         if (joystick.inputX > 0) {
             player.direction = -1; // 오른쪽 이동 시 왼쪽 반전
