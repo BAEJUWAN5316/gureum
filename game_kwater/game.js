@@ -63,42 +63,64 @@ const ctx = canvas.getContext('2d');
 // 캐릭터 이미지
 let characterImage = new Image();
 characterImage.crossOrigin = 'anonymous';
-characterImage.src = 'assets/character.png';
+characterImage.onload = function() {
+    console.log('캐릭터 이미지 로딩 완료:', this.naturalWidth, 'x', this.naturalHeight);
+};
 characterImage.onerror = function() {
     console.error('캐릭터 이미지 로딩 실패:', this.src);
 };
+// 현재 페이지 위치 기반 상대 경로
+let basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+if (!basePath.startsWith('/')) {
+    basePath = '/' + basePath;
+}
+console.log('basePath:', basePath);
+characterImage.src = basePath + 'assets/character.png';
+console.log('characterImage.src:', characterImage.src);
 
 // 아이템(물방울) 이미지
 let itemImage = new Image();
 itemImage.crossOrigin = 'anonymous';
-itemImage.src = 'assets/item.png';
+itemImage.onload = function() {
+    console.log('아이템 이미지 로딩 완료:', this.naturalWidth, 'x', this.naturalHeight);
+};
 itemImage.onerror = function() {
     console.error('아이템 이미지 로딩 실패:', this.src);
 };
+itemImage.src = basePath + 'assets/item.png';
 
 // 배경 이미지
 let backgroundImage = new Image();
 backgroundImage.crossOrigin = 'anonymous';
-backgroundImage.src = 'assets/background.png';
+backgroundImage.onload = function() {
+    console.log('배경 이미지 로딩 완료:', this.naturalWidth, 'x', this.naturalHeight);
+};
 backgroundImage.onerror = function() {
     console.error('배경 이미지 로딩 실패:', this.src);
 };
+backgroundImage.src = basePath + 'assets/background.png';
 
 // 발판 이미지
 let platformImage = new Image();
 platformImage.crossOrigin = 'anonymous';
-platformImage.src = 'assets/platform.png';
+platformImage.onload = function() {
+    console.log('발판 이미지 로딩 완료:', this.naturalWidth, 'x', this.naturalHeight);
+};
 platformImage.onerror = function() {
     console.error('발판 이미지 로딩 실패:', this.src);
 };
+platformImage.src = basePath + 'assets/platform.png';
 
 // 땅(바닥) 이미지
 let groundImage = new Image();
 groundImage.crossOrigin = 'anonymous';
-groundImage.src = 'assets/ground.png';
+groundImage.onload = function() {
+    console.log('땅 이미지 로딩 완료:', this.naturalWidth, 'x', this.naturalHeight);
+};
 groundImage.onerror = function() {
     console.error('땅 이미지 로딩 실패:', this.src);
 };
+groundImage.src = basePath + 'assets/ground.png';
 
 // ========== 음향 설정 ==========
 // 배경음악
@@ -118,25 +140,19 @@ clearSound.volume = 0.7;
 
 // 캔버스 크기 설정 (고정 360×640px)
 function resizeCanvas() {
-    // 고정 크기 (논리적 크기)
-    const logicalWidth = 360;
-    const logicalHeight = 640;
+    // 고정 크기
+    const fixedWidth = 360;
+    const fixedHeight = 640;
 
-    // CSS로 캔버스 표시 크기 설정
-    canvas.style.width = logicalWidth + 'px';
-    canvas.style.height = logicalHeight + 'px';
+    // 간단한 방식: DPI 스케일링 없이 고정 크기로 설정
+    canvas.width = fixedWidth;
+    canvas.height = fixedHeight;
 
-    // 모바일 고DPI 지원
-    const dpr = window.devicePixelRatio || 1;
+    // CSS 표시 크기도 동일하게
+    canvas.style.width = fixedWidth + 'px';
+    canvas.style.height = fixedHeight + 'px';
 
-    // 실제 캔버스 해상도는 DPI에 따라 증가
-    canvas.width = logicalWidth * dpr;
-    canvas.height = logicalHeight * dpr;
-
-    // 컨텍스트 스케일 조정
-    if (dpr > 1) {
-        ctx.scale(dpr, dpr);
-    }
+    console.log('캔버스 크기 설정:', canvas.width, 'x', canvas.height);
 }
 
 // 게임 상태
@@ -556,7 +572,7 @@ function drawGame() {
                 try {
                     // 이미지가 로드되면 타일 패턴으로 반복
                     let x = 0;
-                    while (x < 360) {  // 논리적 너비
+                    while (x < 360) {
                         ctx.drawImage(groundImage, x, platform.y, platform.width, platform.height);
                         x += groundImage.naturalWidth;
                     }
@@ -605,38 +621,67 @@ function drawGame() {
 }
 
 function drawBackground() {
-    // 논리적 크기로 배경 그리기 (DPI 조정 후)
-    const logicalWidth = 360;
-    const logicalHeight = 640;
-
     // 배경 이미지 그리기
     if (backgroundImage && backgroundImage.complete && backgroundImage.naturalWidth > 0) {
         try {
-            // 이미지를 캔버스 크기에 맞춰 그리기
-            ctx.drawImage(backgroundImage, 0, 0, logicalWidth, logicalHeight);
+            // 이미지를 캔버스 크기에 맞춰 그리기 (360x640)
+            ctx.drawImage(backgroundImage, 0, 0, 360, 640);
         } catch (e) {
             console.error('배경 이미지 렌더링 오류:', e);
             // 그라데이션으로 폴백
-            const gradient = ctx.createLinearGradient(0, 0, 0, logicalHeight);
+            const gradient = ctx.createLinearGradient(0, 0, 0, 640);
             gradient.addColorStop(0, '#87CEEB');
             gradient.addColorStop(1, '#E0F6FF');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, logicalWidth, logicalHeight);
+            ctx.fillRect(0, 0, 360, 640);
         }
     } else {
         // 이미지 로딩 중일 때 대체 배경 (하늘 그라데이션)
-        const gradient = ctx.createLinearGradient(0, 0, 0, logicalHeight);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 640);
         gradient.addColorStop(0, '#87CEEB');
         gradient.addColorStop(1, '#E0F6FF');
 
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, logicalWidth, logicalHeight);
+        ctx.fillRect(0, 0, 360, 640);
     }
 }
 
 function drawPlayer() {
-    // character 이미지 그리기
-    if (characterImage && characterImage.complete && characterImage.naturalWidth > 0) {
+    // 디버깅: 첫 프레임에만 로그
+    if (gameState.debugFrame === undefined) {
+        gameState.debugFrame = 0;
+        console.log('=== drawPlayer 호출됨 ===');
+        console.log('characterImage:', characterImage);
+        console.log('characterImage.complete:', characterImage.complete);
+        console.log('characterImage.naturalWidth:', characterImage.naturalWidth);
+        console.log('characterImage.naturalHeight:', characterImage.naturalHeight);
+        console.log('player.x:', player.x, 'player.y:', player.y);
+        console.log('player.width:', player.width, 'player.height:', player.height);
+        console.log('canvas.width:', canvas.width, 'canvas.height:', canvas.height);
+        console.log('ctx getTransform:', ctx.getTransform());
+        console.log('window.devicePixelRatio:', window.devicePixelRatio);
+    }
+
+    // 항상 대체 그래픽으로 플레이어를 표시 (이미지 로드 상태와 관계없이)
+    // 핑크색 사각형
+    ctx.save();
+    ctx.fillStyle = '#FF6B9D';
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    // 테두리
+    ctx.strokeStyle = '#FF1493';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(player.x, player.y, player.width, player.height);
+
+    // 플레이어 중심점 표시 (작은 점)
+    ctx.fillStyle = '#FF0000';
+    ctx.beginPath();
+    ctx.arc(player.x + player.width / 2, player.y + player.height / 2, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // character 이미지가 로드되면 위에 그리기
+    if (characterImage && characterImage.complete && characterImage.naturalWidth > 0 && characterImage.naturalHeight > 0) {
         try {
             const imgHeight = player.height;
             // 이미지 비율 유지하며 높이에 맞춤
@@ -657,23 +702,17 @@ function drawPlayer() {
                 ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
             }
             ctx.restore();
+
+            if (gameState.debugFrame === 0) {
+                console.log('캐릭터 이미지 렌더링 성공');
+            }
         } catch (e) {
             console.error('캐릭터 렌더링 오류:', e);
-            // 오류 시 대체 그래픽
-            ctx.fillStyle = '#FF6B9D';
-            ctx.beginPath();
-            ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2);
-            ctx.fill();
         }
     } else {
-        // 이미지 로딩 중일 때 대체 그래픽 (간단한 사각형)
-        ctx.fillStyle = '#FF6B9D';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-
-        // 테두리
-        ctx.strokeStyle = '#FF1493';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(player.x, player.y, player.width, player.height);
+        if (gameState.debugFrame === 0) {
+            console.log('캐릭터 이미지 미로드 - 대체 그래픽 표시 중');
+        }
     }
 }
 
