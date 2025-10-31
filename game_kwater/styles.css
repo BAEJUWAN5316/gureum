@@ -157,6 +157,9 @@ html, body {
     position: relative;
     width: 100%;
     height: 100%;
+    max-width: 360px;
+    max-height: 640px;
+    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -169,6 +172,8 @@ html, body {
     margin: 0 auto;
     width: 360px;
     height: 640px;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
 }
 
 /* 게임 UI - 점수 정보 */

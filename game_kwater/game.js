@@ -62,23 +62,43 @@ const ctx = canvas.getContext('2d');
 
 // 캐릭터 이미지
 let characterImage = new Image();
+characterImage.crossOrigin = 'anonymous';
 characterImage.src = 'assets/character.png';
+characterImage.onerror = function() {
+    console.error('캐릭터 이미지 로딩 실패:', this.src);
+};
 
 // 아이템(물방울) 이미지
 let itemImage = new Image();
+itemImage.crossOrigin = 'anonymous';
 itemImage.src = 'assets/item.png';
+itemImage.onerror = function() {
+    console.error('아이템 이미지 로딩 실패:', this.src);
+};
 
 // 배경 이미지
 let backgroundImage = new Image();
+backgroundImage.crossOrigin = 'anonymous';
 backgroundImage.src = 'assets/background.png';
+backgroundImage.onerror = function() {
+    console.error('배경 이미지 로딩 실패:', this.src);
+};
 
 // 발판 이미지
 let platformImage = new Image();
+platformImage.crossOrigin = 'anonymous';
 platformImage.src = 'assets/platform.png';
+platformImage.onerror = function() {
+    console.error('발판 이미지 로딩 실패:', this.src);
+};
 
 // 땅(바닥) 이미지
 let groundImage = new Image();
+groundImage.crossOrigin = 'anonymous';
 groundImage.src = 'assets/ground.png';
+groundImage.onerror = function() {
+    console.error('땅 이미지 로딩 실패:', this.src);
+};
 
 // ========== 음향 설정 ==========
 // 배경음악
@@ -98,18 +118,23 @@ clearSound.volume = 0.7;
 
 // 캔버스 크기 설정 (고정 360×640px)
 function resizeCanvas() {
-    // 고정 크기
-    const fixedWidth = 360;
-    const fixedHeight = 640;
+    // 고정 크기 (논리적 크기)
+    const logicalWidth = 360;
+    const logicalHeight = 640;
 
-    canvas.width = fixedWidth;
-    canvas.height = fixedHeight;
+    // CSS로 캔버스 표시 크기 설정
+    canvas.style.width = logicalWidth + 'px';
+    canvas.style.height = logicalHeight + 'px';
 
-    // 모바일에서 캔버스 렌더링 최적화
+    // 모바일 고DPI 지원
     const dpr = window.devicePixelRatio || 1;
+
+    // 실제 캔버스 해상도는 DPI에 따라 증가
+    canvas.width = logicalWidth * dpr;
+    canvas.height = logicalHeight * dpr;
+
+    // 컨텍스트 스케일 조정
     if (dpr > 1) {
-        canvas.width *= dpr;
-        canvas.height *= dpr;
         ctx.scale(dpr, dpr);
     }
 }
@@ -527,12 +552,18 @@ function drawGame() {
         // 첫 번째는 바닥(ground), 나머지는 발판(platform)
         if (index === 0) {
             // 땅(바닥) 그리기
-            if (groundImage && groundImage.complete) {
-                // 이미지가 로드되면 타일 패턴으로 반복
-                let x = 0;
-                while (x < canvas.width) {
-                    ctx.drawImage(groundImage, x, platform.y, platform.width, platform.height);
-                    x += groundImage.width;
+            if (groundImage && groundImage.complete && groundImage.naturalWidth > 0) {
+                try {
+                    // 이미지가 로드되면 타일 패턴으로 반복
+                    let x = 0;
+                    while (x < 360) {  // 논리적 너비
+                        ctx.drawImage(groundImage, x, platform.y, platform.width, platform.height);
+                        x += groundImage.naturalWidth;
+                    }
+                } catch (e) {
+                    console.error('땅 이미지 렌더링 오류:', e);
+                    ctx.fillStyle = platform.color;
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
                 }
             } else {
                 // 이미지 로딩 중일 때 대체 색상
@@ -541,8 +572,14 @@ function drawGame() {
             }
         } else {
             // 발판 그리기
-            if (platformImage && platformImage.complete) {
-                ctx.drawImage(platformImage, platform.x, platform.y, platform.width, platform.height);
+            if (platformImage && platformImage.complete && platformImage.naturalWidth > 0) {
+                try {
+                    ctx.drawImage(platformImage, platform.x, platform.y, platform.width, platform.height);
+                } catch (e) {
+                    console.error('발판 이미지 렌더링 오류:', e);
+                    ctx.fillStyle = platform.color;
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                }
             } else {
                 // 이미지 로딩 중일 때 대체 색상
                 ctx.fillStyle = platform.color;
@@ -568,39 +605,53 @@ function drawGame() {
 }
 
 function drawBackground() {
+    // 논리적 크기로 배경 그리기 (DPI 조정 후)
+    const logicalWidth = 360;
+    const logicalHeight = 640;
+
     // 배경 이미지 그리기
-    if (backgroundImage && backgroundImage.complete) {
-        // 이미지를 캔버스 크기에 맞춰 그리기
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    if (backgroundImage && backgroundImage.complete && backgroundImage.naturalWidth > 0) {
+        try {
+            // 이미지를 캔버스 크기에 맞춰 그리기
+            ctx.drawImage(backgroundImage, 0, 0, logicalWidth, logicalHeight);
+        } catch (e) {
+            console.error('배경 이미지 렌더링 오류:', e);
+            // 그라데이션으로 폴백
+            const gradient = ctx.createLinearGradient(0, 0, 0, logicalHeight);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, logicalWidth, logicalHeight);
+        }
     } else {
         // 이미지 로딩 중일 때 대체 배경 (하늘 그라데이션)
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        const gradient = ctx.createLinearGradient(0, 0, 0, logicalHeight);
         gradient.addColorStop(0, '#87CEEB');
         gradient.addColorStop(1, '#E0F6FF');
 
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, logicalWidth, logicalHeight);
     }
 }
 
 function drawPlayer() {
     // character 이미지 그리기
-    if (characterImage && characterImage.complete && characterImage.width > 0) {
+    if (characterImage && characterImage.complete && characterImage.naturalWidth > 0) {
         try {
             const imgHeight = player.height;
             // 이미지 비율 유지하며 높이에 맞춤
-            const imgWidth = (characterImage.width / characterImage.height) * imgHeight;
+            const imgWidth = (characterImage.naturalWidth / characterImage.naturalHeight) * imgHeight;
             const xOffset = (player.width - imgWidth) / 2; // 중앙 정렬
 
             // 방향에 따라 이미지 반전
             ctx.save();
-            ctx.globalAlpha = 1; // 투명도 확인
 
             if (player.direction === -1) {
                 // 왼쪽 방향: 좌우 반전
-                ctx.translate(player.x + player.width / 2, 0);
+                ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
                 ctx.scale(-1, 1);
-                ctx.drawImage(characterImage, -player.width / 2 - imgWidth / 2 + xOffset, player.y, imgWidth, imgHeight);
+                ctx.translate(-player.x - player.width / 2, -player.y - player.height / 2);
+                ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
             } else {
                 // 오른쪽 방향: 일반
                 ctx.drawImage(characterImage, player.x + xOffset, player.y, imgWidth, imgHeight);
@@ -615,30 +666,48 @@ function drawPlayer() {
             ctx.fill();
         }
     } else {
-        // 이미지 로딩 중일 때 대체 그래픽 (간단한 원형)
+        // 이미지 로딩 중일 때 대체 그래픽 (간단한 사각형)
         ctx.fillStyle = '#FF6B9D';
-        ctx.beginPath();
-        ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+
+        // 테두리
+        ctx.strokeStyle = '#FF1493';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(player.x, player.y, player.width, player.height);
     }
 }
 
 function drawDrop(drop) {
     // 아이템 이미지 그리기
-    if (itemImage && itemImage.complete) {
-        const itemHeight = drop.radius * 2;
-        // 이미지 비율 유지하며 높이에 맞춤
-        const itemWidth = (itemImage.width / itemImage.height) * itemHeight;
-        const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
+    if (itemImage && itemImage.complete && itemImage.naturalWidth > 0) {
+        try {
+            const itemHeight = drop.radius * 2;
+            // 이미지 비율 유지하며 높이에 맞춤
+            const itemWidth = (itemImage.naturalWidth / itemImage.naturalHeight) * itemHeight;
+            const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
 
-        // 글로우 효과
-        ctx.fillStyle = `rgba(30, 144, 255, ${0.2 * glowAmount})`;
-        ctx.beginPath();
-        ctx.arc(drop.x, drop.y, itemHeight / 2 + 5, 0, Math.PI * 2);
-        ctx.fill();
+            // 글로우 효과
+            ctx.fillStyle = `rgba(30, 144, 255, ${0.2 * glowAmount})`;
+            ctx.beginPath();
+            ctx.arc(drop.x, drop.y, itemHeight / 2 + 5, 0, Math.PI * 2);
+            ctx.fill();
 
-        // 이미지 그리기 (중앙 정렬)
-        ctx.drawImage(itemImage, drop.x - itemWidth / 2, drop.y - itemHeight / 2, itemWidth, itemHeight);
+            // 이미지 그리기 (중앙 정렬)
+            ctx.drawImage(itemImage, drop.x - itemWidth / 2, drop.y - itemHeight / 2, itemWidth, itemHeight);
+        } catch (e) {
+            console.error('아이템 렌더링 오류:', e);
+            // 오류 시 대체 그래픽
+            const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
+            ctx.fillStyle = `rgba(30, 144, 255, ${0.3 * glowAmount})`;
+            ctx.beginPath();
+            ctx.arc(drop.x, drop.y, drop.radius + 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = drop.color;
+            ctx.beginPath();
+            ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
     } else {
         // 이미지 로딩 중일 때 대체 그래픽 (원형)
         const glowAmount = Math.sin(drop.glowIntensity) * 0.5 + 1;
